@@ -12,12 +12,21 @@ class Enemy:
         self.alive = True
         self.step = load_sound("asset/step.wav")
 
-    def update(self, target, dt):
+    def update(self, target, dt, other):
         if not self.alive:
             return
+        force = Vector2(0, 0)
+        for x in other:
+            d = vector2_subtract(x.position, self.position)
+            dir = vector2_normalize(d)
+            n = vector2_length_sqr(d)
+            if n > 0.1:
+                change = vector2_scale(dir, 1800 / n)
+                force = vector2_subtract(force, change)
         delta = vector2_subtract(target, self.position)
         util.play_or_stop(self.step, vector2_length_sqr(delta) > Enemy.speed ** 2)
         direction = vector2_normalize(delta)
+        direction = vector2_add(force, direction)
         change = vector2_scale(direction, Enemy.speed * dt)
         self.position = vector2_add(self.position, change)
 
@@ -39,7 +48,7 @@ class Enemies:
 
     def update(target, dt):
         for x in Enemies.xs:
-            x.update(target, dt)
+            x.update(target, dt, Enemies.xs)
         Enemies.xs = [x for x in Enemies.xs if x.alive]
     
     def constrain(window):
