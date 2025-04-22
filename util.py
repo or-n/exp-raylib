@@ -28,8 +28,7 @@ def draw_split_y(window, color):
 
 key_names = {
     getattr(KeyboardKey, name): name.replace("KEY_", "")
-    for name in dir(KeyboardKey)
-    if name.startswith("KEY_")
+    for name in dir(KeyboardKey) if name.startswith("KEY_")
 }
 
 class LastPressed:

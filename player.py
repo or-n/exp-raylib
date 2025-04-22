@@ -1,6 +1,6 @@
 from pyray import *
 from util import *
-from projectile import *
+from shot import *
 from enemy import *
 
 class Player:
@@ -23,8 +23,8 @@ class Player:
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
             d = vector2_subtract(get_mouse_position(), Player.position)
             mouse_dir = vector2_normalize(d)
-            projectile = Projectile(Player.position, mouse_dir)
-            Projectiles.new(projectile)
+            shot = Shot(Player.position, mouse_dir)
+            Shots.new(shot)
         delta = vector2_scale(direction, Player.speed)
         d = vector2_length_sqr(delta)
         play_or_stop(Player.step, d > 0.1)
@@ -35,7 +35,7 @@ class Player:
             Player.change_bind = None
 
     def constrain(window):
-        Projectiles.constrain(window)
+        Shots.constrain(window)
         radiuses = (Player.radius, Player.radius)
         available = vector2_subtract(window, radiuses)
         new = vector2_clamp(Player.position, radiuses, available)

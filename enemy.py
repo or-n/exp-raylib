@@ -22,9 +22,9 @@ class Enemy:
         self.position = vector2_add(self.position, change)
 
     def constrain(self, window):
-        for x in Projectiles.xs:
+        for x in Shots.xs:
             d = vector2_distance_sqr(self.position, x.position)
-            if d < (Enemy.radius + Projectile.radius) ** 2:
+            if d < (Enemy.radius + Shot.radius) ** 2:
                 self.alive = x.alive = False
                 stop_sound(self.step)
 

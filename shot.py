@@ -1,7 +1,7 @@
 from pyray import *
 from util import *
 
-class Projectile:
+class Shot:
     speed = 8
     radius = 8
     collide = load_sound("asset/error_007.ogg")
@@ -12,37 +12,37 @@ class Projectile:
         self.alive = True
 
     def update(self):
-        change = vector2_scale(self.direction, Projectile.speed)
+        change = vector2_scale(self.direction, Shot.speed)
         self.position = vector2_add(self.position, change)
     
     def constrain(self, window):
-        radiuses = (Projectile.radius, Projectile.radius)
+        radiuses = (Shot.radius, Shot.radius)
         available = vector2_subtract(window, radiuses)
         new = vector2_clamp(self.position, radiuses, available)
         d = vector2_distance_sqr(self.position, new)
         if d > 0.1:
-            play_sound(Projectile.collide)
+            play_sound(Shot.collide)
             self.alive = False
 
     def draw(self):
-        draw_circle(int(self.position.x), int(self.position.y), Projectile.radius, WHITE)
+        draw_circle(int(self.position.x), int(self.position.y), Shot.radius, WHITE)
 
-class Projectiles:
+class Shots:
     xs = []
 
     def new(x):
-        Projectiles.xs.append(x)
+        Shots.xs.append(x)
 
     def update():
-        for x in Projectiles.xs:
+        for x in Shots.xs:
             x.update()
-        Projectiles.xs = [x for x in Projectiles.xs if x.alive]
+        Shots.xs = [x for x in Shots.xs if x.alive]
 
     def constrain(window):
-        for x in Projectiles.xs:
+        for x in Shots.xs:
             x.constrain(window)
 
     def draw():
-        for x in Projectiles.xs:
+        for x in Shots.xs:
             x.draw()
         

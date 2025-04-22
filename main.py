@@ -6,23 +6,23 @@ init_audio_device()
 
 from player import *
 from enemy import *
-from projectile import *
+from shot import *
 
 window = Vector2(1920, 1080)
+init_window(int(window.x), int(window.y), "Hello")
 Player.position = vector2_scale(window, 0.5)
 
-init_window(int(window.x), int(window.y), "Hello")
-set_target_fps(60)
+set_target_fps(180)
 font = get_font_default()
 
 while not window_should_close():
     LastPressed.update()
     Player.update()
     Enemies.update(Player.position)
-    Projectiles.update()
+    Shots.update()
     Player.constrain(window)
     Enemies.constrain(window)
-    Projectiles.constrain(window)
+    Shots.constrain(window)
     if random.random() < 0.002:
         value = random.random()
         side = random.choice([0, 1])
@@ -34,7 +34,7 @@ while not window_should_close():
     clear_background(Color(127, 31, 255))
     Player.draw()
     Enemies.draw()
-    Projectiles.draw()
+    Shots.draw()
     draw_split_x(window, RED)
     draw_split_y(window, RED)
     end_drawing()
