@@ -7,8 +7,8 @@ class Player:
     speed = 2
     position = Vector2(0, 0)
     radius = 16
-    step = load_sound("step.wav")
-    collide = load_sound("error_007.ogg")
+    step = load_sound("asset/step.wav")
+    collide = load_sound("asset/error_007.ogg")
     change_bind = None
 
     class DirBind:

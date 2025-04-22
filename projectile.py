@@ -4,7 +4,7 @@ from util import *
 class Projectile:
     speed = 8
     radius = 8
-    collide = load_sound("error_007.ogg")
+    collide = load_sound("asset/error_007.ogg")
 
     def __init__(self, position, direction):
         self.position = position

@@ -5,7 +5,7 @@ import util
 class Enemy:
     speed = 1
     radius = 16
-    collide = load_sound("error_007.ogg")
+    collide = load_sound("asset/error_007.ogg")
 
     def __init__(self, position):
         self.position = position
@@ -22,12 +22,6 @@ class Enemy:
         self.position = vector2_add(self.position, change)
 
     def constrain(self, window):
-        # radiuses = (Enemy.radius, Enemy.radius)
-        # available = vector2_subtract(window, radiuses)
-        # new = vector2_clamp(self.position, radiuses, available)
-        # d = vector2_distance_sqr(self.position, new)
-        # play_or_stop(Enemy.collide, d > Enemy.speed * Enemy.speed)
-        # self.position = new
         for x in Projectiles.xs:
             d = vector2_distance_sqr(self.position, x.position)
             if d < (Enemy.radius + Projectile.radius) ** 2:
