@@ -10,7 +10,7 @@ class Enemy:
     def __init__(self, position):
         self.position = position
         self.alive = True
-        self.step = load_sound("step.wav")
+        self.step = load_sound("asset/step.wav")
 
     def update(self, target):
         if not self.alive:
