@@ -3,7 +3,7 @@ from player import *
 import util
 
 class Enemy:
-    speed = 1
+    speed = 180
     radius = 16
     collide = load_sound("asset/error_007.ogg")
 
@@ -12,13 +12,13 @@ class Enemy:
         self.alive = True
         self.step = load_sound("asset/step.wav")
 
-    def update(self, target):
+    def update(self, target, dt):
         if not self.alive:
             return
         delta = vector2_subtract(target, self.position)
         util.play_or_stop(self.step, vector2_length_sqr(delta) > Enemy.speed ** 2)
         direction = vector2_normalize(delta)
-        change = vector2_scale(direction, Enemy.speed)
+        change = vector2_scale(direction, Enemy.speed * dt)
         self.position = vector2_add(self.position, change)
 
     def constrain(self, window):
@@ -37,9 +37,9 @@ class Enemies:
     def new(x):
         Enemies.xs.append(x)
 
-    def update(target):
+    def update(target, dt):
         for x in Enemies.xs:
-            x.update(target)
+            x.update(target, dt)
         Enemies.xs = [x for x in Enemies.xs if x.alive]
     
     def constrain(window):

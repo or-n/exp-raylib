@@ -4,7 +4,7 @@ from shot import *
 from enemy import *
 
 class Player:
-    speed = 2
+    speed = 360
     position = Vector2(0, 0)
     radius = 16
     step = load_sound("asset/step.wav")
@@ -17,15 +17,15 @@ class Player:
         y = KeyboardKey.KEY_S
         x = KeyboardKey.KEY_D
 
-    def update():
-        Player.speed = 4 if is_key_down(KeyboardKey.KEY_LEFT_SHIFT) else 2
+    def update(dt):
+        Player.speed = 720 if is_key_down(KeyboardKey.KEY_LEFT_SHIFT) else 360
         direction = get_direction(Player.DirBind)
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
             d = vector2_subtract(get_mouse_position(), Player.position)
             mouse_dir = vector2_normalize(d)
             shot = Shot(Player.position, mouse_dir)
             Shots.new(shot)
-        delta = vector2_scale(direction, Player.speed)
+        delta = vector2_scale(direction, Player.speed * dt)
         d = vector2_length_sqr(delta)
         play_or_stop(Player.step, d > 0.1)
         Player.position = vector2_add(Player.position, delta)

@@ -2,7 +2,7 @@ from pyray import *
 from util import *
 
 class Shot:
-    speed = 8
+    speed = 1440
     radius = 8
     collide = load_sound("asset/error_007.ogg")
 
@@ -11,8 +11,8 @@ class Shot:
         self.direction = direction
         self.alive = True
 
-    def update(self):
-        change = vector2_scale(self.direction, Shot.speed)
+    def update(self, dt):
+        change = vector2_scale(self.direction, Shot.speed * dt)
         self.position = vector2_add(self.position, change)
     
     def constrain(self, window):
@@ -33,9 +33,9 @@ class Shots:
     def new(x):
         Shots.xs.append(x)
 
-    def update():
+    def update(dt):
         for x in Shots.xs:
-            x.update()
+            x.update(dt)
         Shots.xs = [x for x in Shots.xs if x.alive]
 
     def constrain(window):
