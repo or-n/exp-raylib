@@ -8,8 +8,9 @@ from player import *
 from enemy import *
 from shot import *
 
-window = Vector2(1920, 1080)
-init_window(int(window.x), int(window.y), "Hello")
+init_window(1920, 1080, "Hello")
+toggle_fullscreen()
+window = Vector2(get_monitor_width(0), get_monitor_height(0))
 Player.position = vector2_scale(window, 0.5)
 
 set_target_fps(180)
