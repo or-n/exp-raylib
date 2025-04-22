@@ -10,15 +10,8 @@ def play_or_stop(sound, should_play):
             stop_sound(sound)
 
 def get_direction(bind):
-    x, y = 0, 0
-    if is_key_down(bind.neg_y):
-        y -= 1
-    if is_key_down(bind.neg_x):
-        x -= 1
-    if is_key_down(bind.y):
-        y += 1
-    if is_key_down(bind.x):
-        x += 1
+    x = int(is_key_down(bind.x)) - int(is_key_down(bind.neg_x))
+    y = int(is_key_down(bind.y)) - int(is_key_down(bind.neg_y))
     return vector2_normalize(Vector2(x, y))
 
 def draw_text_center(font, window, text, size, color):
