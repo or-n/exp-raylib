@@ -11,7 +11,7 @@ class Input:
         x = KeyboardKey.KEY_D
 
     def update():
-        if Input.change_action != None and util.LastPressed.key != None:
+        if Input.change_action and util.LastPressed.key:
             setattr(Input.DirBind, Input.change_action, util.LastPressed.key)
             Input.change_action = None
 
