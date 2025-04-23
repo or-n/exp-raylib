@@ -7,6 +7,7 @@ init_audio_device()
 from player import *
 from enemy import *
 from shot import *
+from input import *
 
 init_window(1920, 1080, "Hello")
 toggle_fullscreen()
@@ -18,6 +19,7 @@ font = get_font_default()
 
 while not window_should_close():
     dt = get_frame_time()
+    Input.update()
     LastPressed.update()
     Player.update(dt)
     Enemies.update(Player.position, dt)
@@ -34,9 +36,11 @@ while not window_should_close():
 
     begin_drawing()
     clear_background(Color(127, 31, 255))
+    draw_fps(20, 0)
     Player.draw()
     Enemies.draw()
     Shots.draw()
+    Input.draw()
     draw_split_x(window, RED)
     draw_split_y(window, RED)
     end_drawing()

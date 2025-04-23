@@ -24,11 +24,13 @@ class Enemy:
                 change = vector2_scale(dir, 1800 / n)
                 force = vector2_subtract(force, change)
         delta = vector2_subtract(target, self.position)
-        util.play_or_stop(self.step, vector2_length_sqr(delta) > Enemy.speed ** 2)
         direction = vector2_normalize(delta)
-        direction = vector2_add(force, direction)
+        direction = vector2_normalize(vector2_add(force, direction))
         change = vector2_scale(direction, Enemy.speed * dt)
-        self.position = vector2_add(self.position, change)
+        c = vector2_length_sqr(change) > 1
+        util.play_or_stop(self.step, c)
+        if c:
+            self.position = vector2_add(self.position, change)
 
     def constrain(self, window):
         for x in Shots.xs:
