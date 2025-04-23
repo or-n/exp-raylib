@@ -30,5 +30,4 @@ class Input:
                     Input.change_action = action
             y += 40
 
-
 Input.actions = [key for key in Input.DirBind.__dict__ if not key.startswith('__')]
