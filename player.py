@@ -7,6 +7,12 @@ from input import *
 class Player:
     position = Vector2(0, 0)
     radius = 16
+    size = Vector2(220, 165)
+    frames = 29
+    frame = 0
+    delay = 0.05
+    next_frame = 0
+    heart = load_texture("asset/heart.png")
     step = load_sound("asset/step.wav")
     collide = load_sound("asset/error_007.ogg")
 
@@ -22,6 +28,9 @@ class Player:
         d = vector2_length_sqr(delta)
         play_or_stop(Player.step, d > 0.1)
         Player.position = vector2_add(Player.position, delta)
+        if get_time() > Player.next_frame:
+            Player.next_frame = get_time() + Player.delay
+            Player.frame = (Player.frame + 1) % Player.frames
 
     def constrain(window):
         Shots.constrain(window)
@@ -33,5 +42,6 @@ class Player:
         Player.position = new
 
     def draw():
-        p = Player.position
-        draw_circle(int(p.x), int(p.y), Player.radius, GREEN)
+        rec = Rectangle(Player.frame * Player.size.x, 0, Player.size.x, Player.size.y)
+        position = vector2_subtract(Player.position, vector2_scale(Player.size, 0.5))
+        draw_texture_rec(Player.heart, rec, position, GREEN)

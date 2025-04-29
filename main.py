@@ -3,15 +3,15 @@ import random
 import util
 
 init_audio_device()
+init_window(1920, 1080, "Hello")
+toggle_fullscreen()
+window = Vector2(get_monitor_width(0), get_monitor_height(0))
 
 from player import *
 from enemy import *
 from shot import *
 from input import *
 
-init_window(1920, 1080, "Hello")
-toggle_fullscreen()
-window = Vector2(get_monitor_width(0), get_monitor_height(0))
 Player.position = vector2_scale(window, 0.5)
 
 set_target_fps(180)
