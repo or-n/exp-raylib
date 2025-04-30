@@ -11,6 +11,7 @@ from player import *
 from enemy import *
 from shot import *
 from input import *
+from background import *
 
 Player.position = vector2_scale(window, 0.5)
 
@@ -33,6 +34,7 @@ while not window_should_close():
         x_or_y = random.choice([Vector2(side, value), Vector2(value, side)])
         position = vector2_multiply(window, x_or_y)
         Enemies.new(Enemy(position))
+    Bg.update()
 
     begin_drawing()
     clear_background(Color(127, 31, 255))

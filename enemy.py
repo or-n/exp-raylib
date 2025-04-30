@@ -15,17 +15,17 @@ class Enemy:
     def update(self, target, dt, other):
         if not self.alive:
             return
-        force = Vector2(0, 0)
-        for x in other:
-            d = vector2_subtract(x.position, self.position)
-            dir = vector2_normalize(d)
-            n = vector2_length_sqr(d)
-            if n > 0.1:
-                change = vector2_scale(dir, 1800 / n)
-                force = vector2_subtract(force, change)
+        # force = Vector2(0, 0)
+        # for x in other:
+        #     d = vector2_subtract(x.position, self.position)
+        #     dir = vector2_normalize(d)
+        #     n = vector2_length_sqr(d)
+        #     if n > 0.1:
+        #         change = vector2_scale(dir, 1800 / n)
+        #         force = vector2_subtract(force, change)
         delta = vector2_subtract(target, self.position)
         direction = vector2_normalize(delta)
-        direction = vector2_normalize(vector2_add(force, direction))
+        # direction = vector2_normalize(vector2_add(force, direction))
         change = vector2_scale(direction, Enemy.speed * dt)
         c = vector2_length_sqr(change) > 1
         util.play_or_stop(self.step, c)

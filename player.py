@@ -8,6 +8,7 @@ class Player:
     position = Vector2(0, 0)
     radius = 16
     size = Vector2(220, 165)
+    bounds = Vector2(120, 140)
     frames = 29
     frame = 0
     delay = 0.05
@@ -34,9 +35,9 @@ class Player:
 
     def constrain(window):
         Shots.constrain(window)
-        radiuses = (Player.radius, Player.radius)
-        available = vector2_subtract(window, radiuses)
-        new = vector2_clamp(Player.position, radiuses, available)
+        half = vector2_scale(Player.bounds, 0.5)
+        available = vector2_subtract(window, half)
+        new = vector2_clamp(Player.position, half, available)
         d = vector2_distance_sqr(Player.position, new)
         play_or_stop(Player.collide, d > 0.1)
         Player.position = new
@@ -44,4 +45,4 @@ class Player:
     def draw():
         rec = Rectangle(Player.frame * Player.size.x, 0, Player.size.x, Player.size.y)
         position = vector2_subtract(Player.position, vector2_scale(Player.size, 0.5))
-        draw_texture_rec(Player.heart, rec, position, GREEN)
+        draw_texture_rec(Player.heart, rec, position, WHITE)
