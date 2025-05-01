@@ -11,9 +11,12 @@ class Shot:
         self.direction = direction
         self.alive = True
 
-    def update(self, dt):
+    def update(self, dt, camera):
         change = vector2_scale(self.direction, Shot.speed * dt)
         self.position = vector2_add(self.position, change)
+        d = vector2_distance_sqr(camera.target, self.position)
+        if d > 1000000:
+            self.alive = False
     
     def constrain(self, window):
         radiuses = (Shot.radius, Shot.radius)
@@ -33,9 +36,9 @@ class Shots:
     def new(x):
         Shots.xs.append(x)
 
-    def update(dt):
+    def update(dt, camera):
         for x in Shots.xs:
-            x.update(dt)
+            x.update(dt, camera)
         Shots.xs = [x for x in Shots.xs if x.alive]
 
     def constrain(window):
