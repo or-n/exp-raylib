@@ -6,7 +6,7 @@ from input import *
 from camera import *
 
 class Player:
-    position = Vector2(0, 0)
+    position = Vector2(0, -100)
     radius = 16
     size = Vector2(16, 32)
     bounds = Vector2(16, 32)

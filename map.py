@@ -9,7 +9,7 @@ class Map:
 
     def __init__(self):
         self.map = [[0 for i in range(Map.max_x)] for j in range(Map.max_y)]
-        self.center = Vector2(0, 0)
+        self.center = Vector2(-Map.size.x * Map.max_x * 0.5, 0)
         for y in range(Map.max_y):
             for x in range(Map.max_x):
                 self.map[y][x] = random.choice([0, 1])

@@ -19,7 +19,7 @@ class Menu:
 
     def draw(window):
         if Menu.state == State.MENU:
-            gui_set_style(GuiControl.DEFAULT, GuiDefaultProperty.TEXT_SIZE, 20)
+            gui_set_style(GuiControl.DEFAULT, GuiDefaultProperty.TEXT_SIZE, 30)
             x = (window.x - Menu.button.x) * 0.5
             y = (window.y - Menu.button.y * 3) * 0.5
             rect = Rectangle(x, y, Menu.button.x, Menu.button.y)
@@ -36,4 +36,4 @@ class Menu:
             if gui_button(rect, Menu.exit) == 1:
                 Menu.state = State.EXIT
         if Menu.state == State.OPTIONS:
-            Input.draw()
+            Input.draw(window)
