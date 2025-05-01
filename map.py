@@ -15,6 +15,7 @@ class Map:
                 self.map[y][x] = random.choice([0, 1])
 
     def collide(self, rect, direction, is_grounded):
+        jump_stop = False
         for y in range(Map.max_y):
             for x in range(Map.max_x):
                 if self.map[y][x] == 1:
@@ -24,12 +25,13 @@ class Map:
                             rect.x = rec.x + rec.width
                         if rect.y + rect.height > rec.y + rec.height and direction.y < 0:
                             rect.y = rec.y + rec.height
+                            jump_stop = True
                         if rect.x < rec.x and direction.x > 0:
                             rect.x = rec.x - rect.width
                         if rect.y < rec.y and direction.y > 0:
                             rect.y = rec.y - rect.height
                             is_grounded = True
-        return (rect, is_grounded)
+        return (rect, is_grounded, jump_stop)
 
     def draw(self):
         for y in range(Map.max_y):

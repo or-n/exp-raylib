@@ -15,6 +15,7 @@ from shot import *
 from input import *
 from background import *
 from map import *
+from restart import *
 
 map = Map()
 map.center.x = -16 * 100 * 0.5
@@ -26,18 +27,11 @@ Player.position = Vector2(0, -100)
 set_target_fps(600)
 set_exit_key(0)
 font = get_font_default()
-camera = Camera2D(Vector2(0, 0), Vector2(0, 0), 0, zoom)
 
 while not window_should_close():
     if is_key_down(KeyboardKey.KEY_ESCAPE):
         Menu.state = State.MENU
     dt = get_frame_time()
-    wheel = get_mouse_wheel_move()
-    mouseWorldPos = get_screen_to_world_2d(get_mouse_position(), camera)
-    camera.offset = vector2_scale(window, 0.5)
-    scale = 0.2 * wheel
-    #zoom = math.exp(math.log(camera.zoom) + scale)
-    #camera.zoom = clamp(zoom, 0.125, 64.0)
     if Menu.state == State.MENU:
         begin_drawing()
         clear_background(Color(127, 31, 255))
@@ -47,14 +41,15 @@ while not window_should_close():
     elif Menu.state == State.GAME:
         Input.update()
         LastPressed.update()
-        Player.update(dt, camera)
+        Player.update(dt)
         rect = Player.get_rect()
-        (rect, is_grounded) = map.collide(rect, Player.direction, Player.is_grounded)
+        (rect, is_grounded, jump_stop) = map.collide(rect, Player.direction, Player.is_grounded)
         Player.set_rect(rect)
         Player.is_grounded = is_grounded
-        camera.target = Player.position
+        if jump_stop:
+            Player.jump_to = None
         Enemies.update(Player.position, dt)
-        Shots.update(dt, camera)
+        Shots.update(dt)
         #Player.constrain(window)
         #Enemies.constrain(window)
         #Shots.constrain(window)
@@ -67,7 +62,7 @@ while not window_should_close():
         begin_drawing()
         clear_background(Color(127, 31, 255))
         draw_fps(20, 0)
-        begin_mode_2d(camera)
+        begin_mode_2d(Camera.camera)
         Player.draw()
         #Enemies.draw()
         Shots.draw()
@@ -84,5 +79,6 @@ while not window_should_close():
         end_drawing()
     elif Menu.state == State.EXIT:
         break
+    Camera.update(window)
     Bg.update()
 close_window()

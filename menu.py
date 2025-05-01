@@ -1,6 +1,7 @@
 from pyray import *
 from enum import Enum
 from input import *
+from restart import *
 
 class State(Enum):
     MENU = 1
@@ -10,6 +11,7 @@ class State(Enum):
 
 class Menu:
     start = "start"
+    restart = "restart"
     options = "options"
     exit = "exit"
     state = State.MENU
@@ -24,9 +26,13 @@ class Menu:
             if gui_button(rect, Menu.start) == 1:
                 Menu.state = State.GAME
             rect = Rectangle(x, y + Menu.button.y, Menu.button.x, Menu.button.y)
+            if gui_button(rect, Menu.restart) == 1:
+                restart()
+                Menu.state = State.GAME
+            rect = Rectangle(x, y + Menu.button.y * 2, Menu.button.x, Menu.button.y)
             if gui_button(rect, Menu.options) == 1:
                 Menu.state = State.OPTIONS
-            rect = Rectangle(x, y + Menu.button.y * 2, Menu.button.x, Menu.button.y)
+            rect = Rectangle(x, y + Menu.button.y * 3, Menu.button.x, Menu.button.y)
             if gui_button(rect, Menu.exit) == 1:
                 Menu.state = State.EXIT
         if Menu.state == State.OPTIONS:

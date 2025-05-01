@@ -9,6 +9,7 @@ class Input:
         neg_x = KeyboardKey.KEY_A
         y = KeyboardKey.KEY_S
         x = KeyboardKey.KEY_D
+        jump = KeyboardKey.KEY_W
 
     def update():
         if Input.change_action and util.LastPressed.key:

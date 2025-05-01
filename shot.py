@@ -1,5 +1,6 @@
 from pyray import *
 from util import *
+from camera import *
 
 class Shot:
     speed = 1440
@@ -11,10 +12,10 @@ class Shot:
         self.direction = direction
         self.alive = True
 
-    def update(self, dt, camera):
+    def update(self, dt):
         change = vector2_scale(self.direction, Shot.speed * dt)
         self.position = vector2_add(self.position, change)
-        d = vector2_distance_sqr(camera.target, self.position)
+        d = vector2_distance_sqr(Camera.camera.target, self.position)
         if d > 1000000:
             self.alive = False
     
@@ -36,9 +37,9 @@ class Shots:
     def new(x):
         Shots.xs.append(x)
 
-    def update(dt, camera):
+    def update(dt):
         for x in Shots.xs:
-            x.update(dt, camera)
+            x.update(dt)
         Shots.xs = [x for x in Shots.xs if x.alive]
 
     def constrain(window):
