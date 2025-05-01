@@ -33,20 +33,22 @@ class Player:
         Player.speed = Vector2(0, 0)
         Player.direction = Vector2(0, 0)
 
-    def update(dt):
-        speed_scale = 400 if is_key_down(KeyboardKey.KEY_LEFT_SHIFT) else 200
-        x = axis_x(Input.DirBind)
-        x *= speed_scale
-        y = 0
+    def update_direction():
+        sprint = is_key_down(Input.DirBind.sprint)
+        x = axis_x(Input.DirBind) * (400 if sprint else 200)
         if Player.jump_to:
-            y -= Player.jump_speed
+            y = -Player.jump_speed
         elif Player.is_grounded:
             if is_key_down(Input.DirBind.jump):
                 Player.is_grounded = False
                 Player.jump_to = Player.position.y - 1.25 * 16
+            y = 0
         else:
-            y += Player.gravity
+            y = Player.gravity
         Player.direction = Vector2(x, y)
+        
+    def update(dt):
+        Player.update_direction()
         if is_mouse_button_pressed(MouseButton.MOUSE_BUTTON_LEFT):
             mouseWorldPos = get_screen_to_world_2d(get_mouse_position(), Camera.camera)
             d = vector2_subtract(mouseWorldPos, Player.position)
@@ -57,21 +59,26 @@ class Player:
         d = vector2_length_sqr(Player.speed)
         play_or_stop(Player.step, d > 0.1)
         Player.position = vector2_add(Player.position, Player.speed)
-        Camera.camera.target = Player.position
         if Player.jump_to and Player.position.y < Player.jump_to:
             Player.jump_to = None
         if get_time() > Player.next_frame:
             Player.next_frame = get_time() + Player.delay
             Player.frame = (Player.frame + 1) % Player.frames
 
-    def constrain(window):
-        Shots.constrain(window)
-        half = vector2_scale(Player.bounds, 0.5)
-        available = vector2_subtract(window, half)
-        new = vector2_clamp(Player.position, half, available)
-        d = vector2_distance_sqr(Player.position, new)
-        play_or_stop(Player.collide, d > 0.1)
-        Player.position = new
+    def constrain(map):
+        # Shots.constrain(window)
+        # half = vector2_scale(Player.bounds, 0.5)
+        # available = vector2_subtract(window, half)
+        # new = vector2_clamp(Player.position, half, available)
+        # d = vector2_distance_sqr(Player.position, new)
+        # play_or_stop(Player.collide, d > 0.1)
+        # Player.position = new
+        rect = Player.get_rect()
+        (rect, is_grounded, jump_stop) = map.collide(rect, Player.direction, Player.is_grounded)
+        Player.set_rect(rect)
+        Player.is_grounded = is_grounded
+        if jump_stop:
+            Player.jump_to = None
 
     def get_rect():
         half = vector2_scale(Player.size, 0.5)

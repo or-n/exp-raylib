@@ -2,6 +2,7 @@ from pyray import *
 from enum import Enum
 from input import *
 from restart import *
+import window
 
 class State(Enum):
     MENU = 1
@@ -17,11 +18,11 @@ class Menu:
     state = State.MENU
     button = Vector2(200, 100)
 
-    def draw(window):
+    def draw():
         if Menu.state == State.MENU:
             gui_set_style(GuiControl.DEFAULT, GuiDefaultProperty.TEXT_SIZE, 30)
-            x = (window.x - Menu.button.x) * 0.5
-            y = (window.y - Menu.button.y * 3) * 0.5
+            x = (window.size.x - Menu.button.x) * 0.5
+            y = (window.size.y - Menu.button.y * 3) * 0.5
             rect = Rectangle(x, y, Menu.button.x, Menu.button.y)
             if gui_button(rect, Menu.start) == 1:
                 Menu.state = State.GAME
@@ -36,4 +37,4 @@ class Menu:
             if gui_button(rect, Menu.exit) == 1:
                 Menu.state = State.EXIT
         if Menu.state == State.OPTIONS:
-            Input.draw(window)
+            Input.draw(window.size)

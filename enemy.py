@@ -1,6 +1,8 @@
 from pyray import *
 from player import *
 import util
+import random
+import window
 
 class Enemy:
     speed = 180
@@ -11,6 +13,13 @@ class Enemy:
         self.position = position
         self.alive = True
         self.step = load_sound("asset/step.wav")
+
+    def arbitrary():
+        value = random.random()
+        side = random.choice([0, 1])
+        x_or_y = random.choice([Vector2(side, value), Vector2(value, side)])
+        position = vector2_multiply(window.size, x_or_y)
+        return Enemy(position)
 
     def update(self, target, dt, other):
         if not self.alive:
@@ -32,13 +41,6 @@ class Enemy:
         if c:
             self.position = vector2_add(self.position, change)
 
-    def constrain(self, window):
-        for x in Shots.xs:
-            d = vector2_distance_sqr(self.position, x.position)
-            if d < (Enemy.radius + Shot.radius) ** 2:
-                self.alive = x.alive = False
-                stop_sound(self.step)
-
     def draw(self):
         draw_circle(int(self.position.x), int(self.position.y), Enemy.radius, RED)
 
@@ -52,11 +54,7 @@ class Enemies:
         for x in Enemies.xs:
             x.update(target, dt, Enemies.xs)
         Enemies.xs = [x for x in Enemies.xs if x.alive]
-    
-    def constrain(window):
-        for x in Enemies.xs:
-            x.constrain(window)
-            
+                
     def draw():
         for x in Enemies.xs:
             x.draw()

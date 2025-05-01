@@ -10,6 +10,7 @@ class Input:
         y = KeyboardKey.KEY_S
         x = KeyboardKey.KEY_D
         jump = KeyboardKey.KEY_W
+        sprint = KeyboardKey.KEY_LEFT_SHIFT
 
     def update():
         if Input.change_action and util.LastPressed.key:
@@ -23,8 +24,9 @@ class Input:
         font_size = 20
         spacing = 20
         button_size = Vector2(300, 50)
-        size = vector2_multiply(button_size, Vector2(1, 6))
-        size.y += spacing * 5
+        n = len(Input.actions)
+        size = vector2_multiply(button_size, Vector2(1, n))
+        size.y += spacing * (n - 1)
         start = vector2_scale(vector2_subtract(window, size), 0.5)
         title = "Configure Keys (Press to Change)"
         title_size = measure_text_ex(font, title, font_size, text_spacing)
