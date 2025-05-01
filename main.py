@@ -39,14 +39,14 @@ while not window_should_close():
                 if d < (Enemy.radius + Shot.radius) ** 2:
                     enemy.alive = shot.alive = False
                     stop_sound(enemy.step)
-        if random.random() < 0.02:
-            Enemies.new(Enemy.arbitrary())
+        # if random.random() < 0.02:
+        #     Enemies.new(Enemy.arbitrary())
         begin_drawing()
         clear_background(Color(127, 31, 255))
         draw_fps(30, 30)
         begin_mode_2d(Camera.camera)
         Player.draw()
-        Enemies.draw()
+        # Enemies.draw()
         Shots.draw()
         map.draw()
         draw_border(Vector2(0, 0), window.size, RED)

@@ -19,9 +19,7 @@ class Map:
         for y in range(Map.max_y):
             for x in range(Map.max_x):
                 if self.map[y][x] == 1:
-                    p = vector2_multiply(Vector2(x, y), Map.size)
-                    start = vector2_add(self.center, p)
-                    rec = Rectangle(start.x, start.y, Map.size.x, Map.size.y)
+                    rec = Rectangle(self.center.x + x * Map.size.x, self.center.y + y * Map.size.y, Map.size.x, Map.size.y)
                     if check_collision_recs(rec, rect):
                         if rect.x + rect.width > rec.x + rec.width and direction.x < 0:
                             rect.x = rec.x + rec.width
