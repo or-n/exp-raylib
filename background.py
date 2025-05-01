@@ -1,15 +1,14 @@
 from pyray import *
 import math
-import numpy as np
 import ctypes
 
 def generate_sine_wave(frequency, duration, sample_rate):
     sample_count = int(sample_rate * duration)
-    samples = np.zeros(sample_count, dtype=np.int16)
+    samples = [0] * sample_count
     for i in range(sample_count):
         time = i / sample_rate
         samples[i] = int(32767 * math.sin(2.0 * math.pi * frequency * time))
-    audio_pointer = ffi.new("short[]", samples.tolist())
+    audio_pointer = ffi.new("short[]", samples)
     return Wave(sample_count, sample_rate, 16, 1, audio_pointer)
 
 def generate_background_music(sample_rate):
