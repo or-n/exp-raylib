@@ -10,6 +10,8 @@ var WindowBg = NewColor(127, 31, 255, 255)
 
 func main() {
     rand.Seed(time.Now().UnixNano())
+	InitAudioDevice()
+	MusicInit()
     InitWindow(1920, 1920, "Hello")
     defer CloseWindow()
     ToggleFullscreen()
@@ -20,6 +22,7 @@ func main() {
     MapInit()
     CameraInit()
     for !WindowShouldClose() {
+    	MusicUpdate()
     	CameraUpdate()
         PlayerUpdate()
         rect := PlayerGetRect()
