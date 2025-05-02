@@ -29,7 +29,16 @@ func MapInit() {
 	offset_x = -int32(max_x) * texture_x / 2
 }
 
-func MapCollide(rec *Rectangle) bool {
+type Sides int
+
+const (
+	SideNeither Sides = iota
+	SideNegative
+	SidePositive
+	SideBoth
+)
+
+func MapCollide(rec *Rectangle, dx, dy Sides) bool {
 	t := RectangleInt32{}
 	t.Width = texture_x
 	t.Height = texture_y
@@ -42,8 +51,19 @@ func MapCollide(rec *Rectangle) bool {
 				t.X = position_x
 				tile := t.ToFloat32()
 				if CheckCollisionRecs(tile, *rec) {
-     				return true
-				}
+     				if (dx == SideNegative || dx == SideBoth) && rec.X + rec.Width > tile.X + tile.Width {
+     					return true
+ 					}
+ 					if (dy == SideNegative || dy == SideBoth) && rec.Y + rec.Height > tile.Y + tile.Height {
+ 						return true
+ 					}
+					if (dx == SidePositive || dx == SideBoth) && rec.X < tile.X {
+						return true
+					}
+					if (dy == SidePositive || dy == SideBoth) && rec.Y < tile.Y {
+						return true
+					}
+ 				}
 			}
 		}
 	}

@@ -48,7 +48,7 @@ func PlayerUpdate() {
 	if PlayerJumpTo != nil {
 		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100 * dt))
 		rect := PlayerGetRect(positionUp)
-		if MapCollide(&rect) {
+		if MapCollide(&rect, SideBoth, SideBoth) {
 			PlayerJumpTo = nil
 		} else {
 			PlayerPosition = positionUp
@@ -57,7 +57,7 @@ func PlayerUpdate() {
 	if PlayerJumpTo == nil {
 		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 250 * dt))
 		rect := PlayerGetRect(positionWithGravity)
-		if MapCollide(&rect) {
+		if MapCollide(&rect, SideBoth, SideBoth) {
 			PlayerGrounded = true
 			PlayerPosition.Y = float32(math.Round(float64(PlayerPosition.Y / 16)) * 16)
 		} else {
@@ -65,7 +65,7 @@ func PlayerUpdate() {
 			PlayerPosition = positionWithGravity
 		}
 	}
-	if PlayerGrounded && IsKeyDown(InputJump) {
+	if PlayerGrounded && IsKeyPressed(InputJump) {
 		value := PlayerPosition.Y - 1.25 * 16
 		PlayerJumpTo = new(float32)
 		*PlayerJumpTo = value
@@ -80,8 +80,18 @@ func PlayerUpdate() {
 	deltaX := float32(InputAxisX() * speedX)
 	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX * dt, 0))
 	rect := PlayerGetRect(positionMove)
-	if !MapCollide(&rect) {
+	if !MapCollide(&rect, SideBoth, SideNeither) {
 		PlayerPosition = positionMove
+	} else {
+		if MapCollide(&rect, SideNegative, SideNeither) {
+			offset := float32(1)
+			x := PlayerPosition.X + offset
+			PlayerPosition.X = float32(math.Round(float64(x / 16)) * 16) - offset
+		} else if MapCollide(&rect, SidePositive, SideNeither) {
+			offset := float32(PlayerSize.X - 1)
+			x := PlayerPosition.X + offset
+			PlayerPosition.X = float32(math.Round(float64(x / 16)) * 16) - offset
+		}
 	}
 }
 
