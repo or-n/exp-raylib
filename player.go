@@ -16,7 +16,7 @@ var (
 func PlayerInit() {
     PlayerPosition = NewVector2(0, -100)
     PlayerSize = NewVector2(16, 32)
-    PlayerTexture = LoadTexture("asset/player.png")
+    PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
 func PlayerGetRect(position Vector2) Rectangle {
@@ -40,6 +40,10 @@ func PlayerCenter() Vector2 {
 	return Vector2Add(PlayerRealPosition(), Vector2Scale(PlayerRealSize(), 0.5))
 }
 
+func Round(x float32) float32 {
+	return float32(math.Round(float64(x)))
+}
+
 func PlayerUpdate() {
 	dt := GetFrameTime()
 	if PlayerJumpTo != nil && PlayerPosition.Y < *PlayerJumpTo {
@@ -50,16 +54,17 @@ func PlayerUpdate() {
 		rect := PlayerGetRect(positionUp)
 		if MapCollide(&rect) {
 			PlayerJumpTo = nil
+			PlayerPosition.Y = Round(PlayerPosition.Y)
 		} else {
 			PlayerPosition = positionUp
 		}
 	}
 	if PlayerJumpTo == nil {
-		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 250 * dt))
+		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 200 * dt))
 		rect := PlayerGetRect(positionWithGravity)
 		if MapCollide(&rect) {
 			PlayerGrounded = true
-			PlayerPosition.Y = float32(math.Round(float64(PlayerPosition.Y / 16)) * 16)
+			PlayerPosition.Y = Round(PlayerPosition.Y)
 		} else {
 			PlayerGrounded = false
 			PlayerPosition = positionWithGravity
@@ -72,8 +77,8 @@ func PlayerUpdate() {
 		PlayerGrounded = false
 	}
 	var speedX int32
-	if IsKeyDown(InputSprint) {
-		speedX = 400
+	if IsKeyDown(InputSneak) {
+		speedX = 25
 	} else {
 		speedX = 200
 	}
@@ -83,25 +88,11 @@ func PlayerUpdate() {
 	if !MapCollide(&rect) {
 		PlayerPosition = positionMove
 	} else {
-		var offset float32
-		if deltaX < 0 {
-			offset = 1
-		} else {
-			offset = PlayerSize.X - 1
-		}
-		x := PlayerPosition.X + offset
-		PlayerPosition.X = float32(math.Round(float64(x / 16)) * 16) - offset
+		PlayerPosition.X = Round(PlayerPosition.X)
 	}
 }
 
 func PlayerDraw() {
-	color := White
-	if PlayerJumpTo != nil {
-		color = Red
-	} else if PlayerGrounded {
-		color = Green
-	}
 	rect := PlayerGetRect(NewVector2(0, 0))
-	DrawTextureRec(PlayerTexture, rect, PlayerRealPosition(), color)
-    // DrawTextureV(PlayerTexture, PlayerPosition, color)
+	DrawTextureRec(PlayerTexture, rect, PlayerRealPosition(), White)
 }

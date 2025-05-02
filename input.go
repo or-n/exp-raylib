@@ -8,7 +8,7 @@ var (
 	InputY int32
 	InputX int32
 	InputJump int32
-	InputSprint int32
+	InputSneak int32
 )
 
 func InputInit() {
@@ -17,7 +17,7 @@ func InputInit() {
 	InputY = KeyS
 	InputX = KeyD
 	InputJump = KeyW
-	InputSprint = KeyLeftShift
+	InputSneak = KeyLeftShift
 }
 
 func boolI32(x bool) int32 {
