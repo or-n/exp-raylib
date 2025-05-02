@@ -25,7 +25,7 @@ func main() {
     	MusicUpdate()
     	CameraUpdate()
         PlayerUpdate()
-        MainCamera.Target = PlayerPosition
+        MainCamera.Target = PlayerCenter()
         BeginDrawing()
         ClearBackground(WindowBg)
         DrawFPS(30, 30)

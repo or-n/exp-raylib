@@ -28,6 +28,10 @@ func PlayerGetRect(position Vector2) Rectangle {
 	return rec
 }
 
+func PlayerCenter() Vector2 {
+	return Vector2Add(PlayerPosition, Vector2Scale(PlayerSize, 0.5))
+}
+
 func PlayerUpdate() {
 	dt := GetFrameTime()
 	if PlayerJumpTo != nil && PlayerPosition.Y < *PlayerJumpTo {
@@ -80,5 +84,8 @@ func PlayerDraw() {
 	} else if PlayerGrounded {
 		color = Green
 	}
-    DrawTextureV(PlayerTexture, PlayerPosition, color)
+	rect := PlayerGetRect(NewVector2(0, 0))
+	position := Vector2Add(PlayerPosition, NewVector2(1, 2))
+	DrawTextureRec(PlayerTexture, rect, position, color)
+    // DrawTextureV(PlayerTexture, PlayerPosition, color)
 }
