@@ -29,6 +29,44 @@ func MapInit() {
 	offset_x = -int32(max_x) * texture_x / 2
 }
 
+func MapCollide(rec *Rectangle, speed Vector2, up, down *bool) {
+	t := RectangleInt32{}
+	t.Width = texture_x
+	t.Height = texture_y
+	for y := 0; y < max_y; y++ {
+		position_y := int32(y) * texture_y + offset_y
+		t.Y = position_y
+		for x := 0; x < max_x; x++ {
+			if data[y][x] == 1 {
+				position_x := int32(x) * texture_x + offset_x
+				t.X = position_x
+				tile := t.ToFloat32()
+				if CheckCollisionRecs(tile, *rec) {
+					if rec.X + rec.Width > tile.X + tile.Width && speed.X < 0 {
+						rec.X = tile.X + tile.Width
+					}
+					if rec.Y + rec.Height > tile.Y + tile.Height && speed.Y < 0 {
+						rec.Y = tile.Y + tile.Height
+						*up = true
+					}
+                    if rec.X < tile.X && speed.X > 0 {
+                        rec.X = tile.X - rec.Width
+                    }
+                    if rec.Y < tile.Y && speed.Y > 0 {
+                        rec.Y = tile.Y - rec.Height
+                    }
+				}
+				tile.Height += 0.25 * 16
+				if CheckCollisionRecs(tile, *rec) {
+                    if rec.Y < tile.Y && speed.Y > 0 {
+                        *down = true
+                    }
+				}
+			}
+		}
+	}
+}
+
 func MapDraw() {
 	for y := 0; y < max_y; y++ {
 		position_y := int32(y) * texture_y + offset_y

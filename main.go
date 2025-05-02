@@ -22,6 +22,12 @@ func main() {
     for !WindowShouldClose() {
     	CameraUpdate()
         PlayerUpdate()
+        rect := PlayerGetRect()
+        up := false
+        down := false
+        MapCollide(&rect, PlayerSpeed, &up, &down)
+        PlayerGrounded = down
+        PlayerSetRect(rect)
         BeginDrawing()
         ClearBackground(WindowBg)
         DrawFPS(30, 30)
