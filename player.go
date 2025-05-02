@@ -28,8 +28,16 @@ func PlayerGetRect(position Vector2) Rectangle {
 	return rec
 }
 
+func PlayerRealPosition() Vector2 {
+	return Vector2Add(PlayerPosition, NewVector2(1, 2))
+}
+
+func PlayerRealSize() Vector2 {
+	return Vector2Subtract(PlayerSize, NewVector2(2, 2))
+}
+
 func PlayerCenter() Vector2 {
-	return Vector2Add(PlayerPosition, Vector2Scale(PlayerSize, 0.5))
+	return Vector2Add(PlayerRealPosition(), Vector2Scale(PlayerRealSize(), 0.5))
 }
 
 func PlayerUpdate() {
@@ -85,7 +93,6 @@ func PlayerDraw() {
 		color = Green
 	}
 	rect := PlayerGetRect(NewVector2(0, 0))
-	position := Vector2Add(PlayerPosition, NewVector2(1, 2))
-	DrawTextureRec(PlayerTexture, rect, position, color)
+	DrawTextureRec(PlayerTexture, rect, PlayerRealPosition(), color)
     // DrawTextureV(PlayerTexture, PlayerPosition, color)
 }
