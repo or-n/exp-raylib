@@ -13,6 +13,8 @@ var (
 	texture Texture2D
 	texture_x int32
 	texture_y int32
+	offset_x int32
+	offset_y int32
 )
 
 func MapInit() {
@@ -24,14 +26,15 @@ func MapInit() {
 	texture = LoadTexture("asset/dirt.png")
 	texture_x = 16
 	texture_y = 16
+	offset_x = -int32(max_x) * texture_x / 2
 }
 
 func MapDraw() {
 	for y := 0; y < max_y; y++ {
-		position_y := int32(y) * texture_y
+		position_y := int32(y) * texture_y + offset_y
 		for x := 0; x < max_x; x++ {
 			if data[y][x] == 1 {
-				position_x := int32(x) * texture_x
+				position_x := int32(x) * texture_x + offset_x
 				DrawTexture(texture, position_x, position_y, White)
 			}
 		}

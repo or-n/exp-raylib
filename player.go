@@ -10,7 +10,7 @@ var (
 )
 
 func PlayerInit() {
-    PlayerPosition = NewVector2(100, 100)
+    PlayerPosition = NewVector2(0, -100)
     PlayerSize = NewVector2(16, 16)
     PlayerTexture = LoadTexture("asset/dirt.png")
 }
