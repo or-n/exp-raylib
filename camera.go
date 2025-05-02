@@ -8,12 +8,11 @@ var (
 )
 
 func CameraInit() {
-	MainCamera.Zoom = 1.
+	MainCamera.Zoom = 2.
 }
 
 func CameraUpdate() {
 	wheel := GetMouseWheelMove()
-	// mouseWorldPos := GetScreenToWorld2D(GetMousePosition(), MainCamera)
     MainCamera.Offset = Vector2Scale(WindowSize, 0.5)
     scale := 0.2 * wheel
     zoom := float32(math.Exp(math.Log(float64(MainCamera.Zoom)) + float64(scale)))
