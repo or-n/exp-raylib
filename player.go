@@ -1,61 +1,84 @@
 package main
 
-import . "github.com/gen2brain/raylib-go/raylib"
+import (
+	. "github.com/gen2brain/raylib-go/raylib"
+	"math"
+)
 
 var (
 	PlayerPosition Vector2
 	PlayerSize Vector2
-	PlayerSpeed Vector2
 	PlayerTexture Texture2D
 	PlayerGrounded bool
+	PlayerJumpTo *float32
 )
 
 func PlayerInit() {
     PlayerPosition = NewVector2(0, -100)
-    PlayerSize = NewVector2(16, 16)
-    PlayerTexture = LoadTexture("asset/dirt.png")
+    PlayerSize = NewVector2(16, 32)
+    PlayerTexture = LoadTexture("asset/player.png")
 }
 
-func PlayerGetRect() Rectangle {
+func PlayerGetRect(position Vector2) Rectangle {
 	rec := Rectangle{}
-	rec.X = PlayerPosition.X
-	rec.Y = PlayerPosition.Y
-	rec.Width = PlayerSize.X
-	rec.Height = PlayerSize.Y
+	rec.X = position.X + 1
+	rec.Y = position.Y + 2
+	rec.Width = PlayerSize.X - 2
+	rec.Height = PlayerSize.Y - 2
 	return rec
 }
 
-func PlayerSetRect(rec Rectangle) {
-	PlayerPosition.X = rec.X
-	PlayerPosition.Y = rec.Y
-}
-
 func PlayerUpdate() {
-	var speed_x int32
+	dt := GetFrameTime()
+	if PlayerJumpTo != nil && PlayerPosition.Y < *PlayerJumpTo {
+		PlayerJumpTo = nil
+	}
+	if PlayerJumpTo != nil {
+		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100 * dt))
+		rect := PlayerGetRect(positionUp)
+		if MapCollide(&rect) {
+			PlayerJumpTo = nil
+		} else {
+			PlayerPosition = positionUp
+		}
+	}
+	if PlayerJumpTo == nil {
+		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 250 * dt))
+		rect := PlayerGetRect(positionWithGravity)
+		if MapCollide(&rect) {
+			PlayerGrounded = true
+			PlayerPosition.Y = float32(math.Round(float64(PlayerPosition.Y / 16)) * 16)
+		} else {
+			PlayerGrounded = false
+			PlayerPosition = positionWithGravity
+		}
+	}
+	if PlayerGrounded && IsKeyDown(InputJump) {
+		value := PlayerPosition.Y - 1.25 * 16
+		PlayerJumpTo = new(float32)
+		*PlayerJumpTo = value
+		PlayerGrounded = false
+	}
+	var speedX int32
 	if IsKeyDown(InputSprint) {
-		speed_x = 400
+		speedX = 400
 	} else {
-		speed_x = 200
+		speedX = 200
 	}
-	PlayerSpeed.X = float32(InputAxisX() * speed_x)
-	if PlayerGrounded {
-		PlayerSpeed.Y = 0
-	} else {
-		PlayerSpeed.Y = 250
+	deltaX := float32(InputAxisX() * speedX)
+	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX * dt, 0))
+	rect := PlayerGetRect(positionMove)
+	if !MapCollide(&rect) {
+		PlayerPosition = positionMove
 	}
-	delta := Vector2Scale(PlayerSpeed, GetFrameTime())
-	PlayerPosition = Vector2Add(PlayerPosition, delta)
 }
 
 func PlayerDraw() {
 	color := White
-	if PlayerGrounded {
+	if PlayerJumpTo != nil {
+		color = Red
+	} else if PlayerGrounded {
 		color = Green
 	}
     DrawTextureV(PlayerTexture, PlayerPosition, color)
-    color.A = 127
-    DrawRectangleRec(PlayerGetRect(), color)
-    start := Vector2Add(PlayerPosition, Vector2Scale(PlayerSize, 0.5))
-    end := Vector2Add(start, PlayerSpeed)
-    DrawLineV(start, end, White)
 }
