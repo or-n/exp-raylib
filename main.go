@@ -18,7 +18,6 @@ func main() {
 	WindowInit()
 	SetTargetFPS(600)
 	PlayerInit()
-	InputInit()
 	MapInit()
 	CameraInit()
 	CursorInit()
@@ -55,9 +54,10 @@ func main() {
 			BeginDrawing()
 			ClearBackground(WindowBg)
 			DrawFPS(30, 30)
-			MenuDraw()
+			InputDraw()
 			EndDrawing()
 		}
+		InputUpdate()
 		MusicUpdate()
 	}
 }

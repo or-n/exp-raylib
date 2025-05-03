@@ -70,16 +70,16 @@ func PlayerUpdate() {
 			PlayerPosition = positionWithGravity
 		}
 	}
-	if grounded && IsKeyPressed(InputJump) {
+	if grounded && IsKeyPressed(Input[ActionJump]) {
 		value := PlayerPosition.Y - 1.25*16
 		jumpTo = new(float32)
 		*jumpTo = value
 		grounded = false
 	}
 	var speedX int32
-	if IsKeyDown(InputSneak) {
+	if IsKeyDown(Input[ActionSneak]) {
 		speedX = 25
-	} else if IsKeyDown(InputSprint) {
+	} else if IsKeyDown(Input[ActionSprint]) {
 		speedX = 400
 	} else {
 		speedX = 200
