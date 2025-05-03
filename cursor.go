@@ -9,7 +9,6 @@ var (
 
 func CursorInit() {
 	cursorTexture = LoadTexture("asset/dirt.png")
-	HideCursor()
 }
 
 func CursorPosition() Vector2 {
