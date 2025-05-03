@@ -10,7 +10,7 @@ const (
 
 var (
 	data [max_y][max_x]int
-	texture Texture2D
+	dirtTexture Texture2D
 	texture_x int32
 	texture_y int32
 	offset_x int32
@@ -23,7 +23,7 @@ func MapInit() {
 			data[y][x] = rand.Intn(2)
 		}
 	}
-	texture = LoadTexture("asset/dirt.png")
+	dirtTexture = LoadTexture("asset/dirt.png")
 	texture_x = 16
 	texture_y = 16
 	offset_x = -int32(max_x) * texture_x / 2
@@ -63,7 +63,7 @@ func MapDraw() {
 				position_x := int32(x) * texture_x + offset_x
 				rect.X = float32(position_x)
 				if CheckCollisionRecs(rect, cameraRect) {
-					DrawTexture(texture, position_x, position_y, White)
+					DrawTexture(dirtTexture, position_x, position_y, White)
 				}
 			}
 		}

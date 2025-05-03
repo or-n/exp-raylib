@@ -21,6 +21,7 @@ func main() {
     InputInit()
     MapInit()
     CameraInit()
+    CursorInit()
     for !WindowShouldClose() {
     	MusicUpdate()
     	CameraUpdate()
@@ -32,6 +33,7 @@ func main() {
 		BeginMode2D(MainCamera)
 			MapDraw()
 	        PlayerDraw()
+	        CursorDraw()
         EndMode2D()
         EndDrawing()
     }
