@@ -32,29 +32,25 @@ func MenuInit() {
 }
 
 func MenuDraw() {
-	if SimulationState == StateMenu {
-		gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
-		x := (WindowSize.X - button.X) * 0.5
-		y := (WindowSize.Y - button.Y*4) * 0.5
-		rect := NewRectangle(x, y, button.X, button.Y)
-		if gui.Button(rect, "Start") {
-			SimulationState = StateGame
-		}
-		rect = NewRectangle(x, y+button.Y, button.X, button.Y)
-		if gui.Button(rect, "Restart") {
-			// Restart()
-			SimulationState = StateGame
-		}
-		rect = NewRectangle(x, y+button.Y*2, button.X, button.Y)
-		if gui.Button(rect, "Options") {
-			SimulationState = StateOptions
-		}
-		rect = NewRectangle(x, y+button.Y*3, button.X, button.Y)
-		if gui.Button(rect, "Exit") {
-			SimulationState = StateExit
-		}
+	gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
+	x := (WindowSize.X - button.X) * 0.5
+	y := (WindowSize.Y - button.Y*4) * 0.5
+	rect := NewRectangle(x, y, button.X, button.Y)
+	if gui.Button(rect, "Start") {
+		SimulationState = StateGame
 	}
-	if SimulationState == StateOptions {
-		// InputDraw(WindowSize)
+	rect = NewRectangle(x, y+button.Y, button.X, button.Y)
+	if gui.Button(rect, "Restart") {
+		PlayerRestart()
+		CameraRestart()
+		SimulationState = StateGame
+	}
+	rect = NewRectangle(x, y+button.Y*2, button.X, button.Y)
+	if gui.Button(rect, "Options") {
+		SimulationState = StateOptions
+	}
+	rect = NewRectangle(x, y+button.Y*3, button.X, button.Y)
+	if gui.Button(rect, "Exit") {
+		SimulationState = StateExit
 	}
 }

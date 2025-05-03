@@ -19,6 +19,12 @@ func PlayerInit() {
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
+func PlayerRestart() {
+	PlayerPosition = NewVector2(0, -100)
+	grounded = false
+	jumpTo = nil
+}
+
 func PlayerGetRect(position Vector2) Rectangle {
 	rec := Rectangle{}
 	rec.X = position.X + 1
