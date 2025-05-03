@@ -51,12 +51,20 @@ func MapCollide(rec *Rectangle) bool {
 }
 
 func MapDraw() {
+	cameraRect := CameraRect(0)
+	rect := Rectangle {}
+	rect.Width = float32(texture_x)
+	rect.Height = float32(texture_y)
 	for y := 0; y < max_y; y++ {
 		position_y := int32(y) * texture_y + offset_y
+		rect.Y = float32(position_y)
 		for x := 0; x < max_x; x++ {
 			if data[y][x] == 1 {
 				position_x := int32(x) * texture_x + offset_x
-				DrawTexture(texture, position_x, position_y, White)
+				rect.X = float32(position_x)
+				if CheckCollisionRecs(rect, cameraRect) {
+					DrawTexture(texture, position_x, position_y, White)
+				}
 			}
 		}
 	}

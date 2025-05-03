@@ -24,3 +24,14 @@ func CameraUpdate() {
     	MainCamera.Zoom = zoom
     }
 }
+
+func CameraRect(offset float32) Rectangle {
+	r := Rectangle {}
+	r.Width = WindowSize.X / MainCamera.Zoom
+	r.Height = WindowSize.Y / MainCamera.Zoom
+	r.X = MainCamera.Target.X - r.Width * 0.5 + offset
+	r.Y = MainCamera.Target.Y - r.Height * 0.5 + offset
+	r.Width -= 2 * offset
+	r.Height -= 2 * offset
+	return r
+}

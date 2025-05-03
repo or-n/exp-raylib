@@ -16,9 +16,9 @@ with pkgs; pkgs.mkShell rec {
     # pkg-config
 
     wayland
-    # wayland-protocols
-    # libxkbcommon
-    # glfw-wayland
+    wayland-protocols
+    libxkbcommon
+    glfw-wayland
   ];
   LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
 }

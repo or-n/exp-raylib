@@ -9,8 +9,8 @@ var (
 	PlayerPosition Vector2
 	PlayerSize Vector2
 	PlayerTexture Texture2D
-	PlayerGrounded bool
-	PlayerJumpTo *float32
+	grounded bool
+	jumpTo *float32
 )
 
 func PlayerInit() {
@@ -46,35 +46,35 @@ func Round(x float32) float32 {
 
 func PlayerUpdate() {
 	dt := GetFrameTime()
-	if PlayerJumpTo != nil && PlayerPosition.Y < *PlayerJumpTo {
-		PlayerJumpTo = nil
+	if jumpTo != nil && PlayerPosition.Y < *jumpTo {
+		jumpTo = nil
 	}
-	if PlayerJumpTo != nil {
+	if jumpTo != nil {
 		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100 * dt))
 		rect := PlayerGetRect(positionUp)
 		if MapCollide(&rect) {
-			PlayerJumpTo = nil
+			jumpTo = nil
 			PlayerPosition.Y = Round(PlayerPosition.Y)
 		} else {
 			PlayerPosition = positionUp
 		}
 	}
-	if PlayerJumpTo == nil {
+	if jumpTo == nil {
 		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 200 * dt))
 		rect := PlayerGetRect(positionWithGravity)
 		if MapCollide(&rect) {
-			PlayerGrounded = true
+			grounded = true
 			PlayerPosition.Y = Round(PlayerPosition.Y)
 		} else {
-			PlayerGrounded = false
+			grounded = false
 			PlayerPosition = positionWithGravity
 		}
 	}
-	if PlayerGrounded && IsKeyPressed(InputJump) {
+	if grounded && IsKeyPressed(InputJump) {
 		value := PlayerPosition.Y - 1.25 * 16
-		PlayerJumpTo = new(float32)
-		*PlayerJumpTo = value
-		PlayerGrounded = false
+		jumpTo = new(float32)
+		*jumpTo = value
+		grounded = false
 	}
 	var speedX int32
 	if IsKeyDown(InputSneak) {
