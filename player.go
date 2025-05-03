@@ -7,10 +7,10 @@ import (
 
 var (
 	PlayerPosition Vector2
-	PlayerSize Vector2
-	PlayerTexture Texture2D
-	grounded bool
-	jumpTo *float32
+	PlayerSize     Vector2
+	PlayerTexture  Texture2D
+	grounded       bool
+	jumpTo         *float32
 )
 
 func PlayerInit() {
@@ -50,7 +50,7 @@ func PlayerUpdate() {
 		jumpTo = nil
 	}
 	if jumpTo != nil {
-		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100 * dt))
+		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100*dt))
 		rect := PlayerGetRect(positionUp)
 		if MapCollide(&rect) {
 			jumpTo = nil
@@ -60,7 +60,7 @@ func PlayerUpdate() {
 		}
 	}
 	if jumpTo == nil {
-		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 200 * dt))
+		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 200*dt))
 		rect := PlayerGetRect(positionWithGravity)
 		if MapCollide(&rect) {
 			grounded = true
@@ -71,7 +71,7 @@ func PlayerUpdate() {
 		}
 	}
 	if grounded && IsKeyPressed(InputJump) {
-		value := PlayerPosition.Y - 1.25 * 16
+		value := PlayerPosition.Y - 1.25*16
 		jumpTo = new(float32)
 		*jumpTo = value
 		grounded = false
@@ -79,11 +79,13 @@ func PlayerUpdate() {
 	var speedX int32
 	if IsKeyDown(InputSneak) {
 		speedX = 25
+	} else if IsKeyDown(InputSprint) {
+		speedX = 400
 	} else {
 		speedX = 200
 	}
 	deltaX := float32(InputAxisX() * speedX)
-	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX * dt, 0))
+	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX*dt, 0))
 	rect := PlayerGetRect(positionMove)
 	if !MapCollide(&rect) {
 		PlayerPosition = positionMove

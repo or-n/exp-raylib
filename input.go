@@ -3,12 +3,13 @@ package main
 import . "github.com/gen2brain/raylib-go/raylib"
 
 var (
-	InputNegY int32
-	InputNegX int32
-	InputY int32
-	InputX int32
-	InputJump int32
-	InputSneak int32
+	InputNegY   int32
+	InputNegX   int32
+	InputY      int32
+	InputX      int32
+	InputJump   int32
+	InputSneak  int32
+	InputSprint int32
 )
 
 func InputInit() {
@@ -18,6 +19,7 @@ func InputInit() {
 	InputX = KeyD
 	InputJump = KeyW
 	InputSneak = KeyLeftShift
+	InputSprint = KeyLeftControl
 }
 
 func boolI32(x bool) int32 {
