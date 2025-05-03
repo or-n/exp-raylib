@@ -32,9 +32,9 @@ func main() {
         DrawFPS(30, 30)
 		BeginMode2D(MainCamera)
 			MapDraw()
-	        PlayerDraw()
-	        CursorDraw()
-        EndMode2D()
+			PlayerDraw()
+			CursorDraw()
+		EndMode2D()
         EndDrawing()
     }
 }

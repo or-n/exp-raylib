@@ -13,16 +13,16 @@ func CameraInit() {
 
 func CameraUpdate() {
 	wheel := GetMouseWheelMove()
-    MainCamera.Offset = Vector2Scale(WindowSize, 0.5)
-    scale := 0.2 * wheel
-    zoom := float32(math.Exp(math.Log(float64(MainCamera.Zoom)) + float64(scale)))
-    if zoom < 0.125 {
-    	MainCamera.Zoom = 0.125
-    } else if zoom > 64 {
-    	MainCamera.Zoom = 64
-    } else {
-    	MainCamera.Zoom = zoom
-    }
+	MainCamera.Offset = Vector2Scale(WindowSize, 0.5)
+	scale := 0.2 * wheel
+	zoom := float32(math.Exp(math.Log(float64(MainCamera.Zoom)) + float64(scale)))
+	if zoom < 0.125 {
+		MainCamera.Zoom = 0.125
+	} else if zoom > 64 {
+		MainCamera.Zoom = 64
+	} else {
+		MainCamera.Zoom = zoom
+	}
 }
 
 func CameraRect(offset float32) Rectangle {
