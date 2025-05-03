@@ -2,10 +2,13 @@ package main
 
 import . "github.com/gen2brain/raylib-go/raylib"
 
-var cursorTexture Texture2D
+var (
+	cursorTexture Texture2D
+	mouseMoved    bool
+)
 
 func CursorInit() {
-	cursorTexture = LoadTexture("asset/player.png")
+	cursorTexture = LoadTexture("asset/dirt.png")
 	HideCursor()
 }
 
@@ -14,8 +17,17 @@ func CursorPosition() Vector2 {
 }
 
 func CursorDraw() {
-	p := CursorPosition()
+	cursorPosition := CursorPosition()
+	if !mouseMoved {
+		if cursorPosition.X > 0 || cursorPosition.Y > 0 {
+			mouseMoved = true
+		} else {
+			return
+		}
+	}
 	size := NewVector2(float32(cursorTexture.Width), float32(cursorTexture.Height))
-	offset := Vector2Scale(size, 0.5)
-	DrawTextureV(cursorTexture, Vector2Subtract(p, offset), White)
+	scale := float32(0.5)
+	offset := Vector2Scale(size, 0.5*scale)
+	p := Vector2Subtract(cursorPosition, offset)
+	DrawTextureEx(cursorTexture, p, 0, scale, White)
 }
