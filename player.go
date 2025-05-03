@@ -14,9 +14,9 @@ var (
 )
 
 func PlayerInit() {
-    PlayerPosition = NewVector2(0, -100)
-    PlayerSize = NewVector2(16, 32)
-    PlayerTexture = LoadTexture("asset/nwm.png")
+	PlayerPosition = NewVector2(0, -100)
+	PlayerSize = NewVector2(16, 32)
+	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
 func PlayerGetRect(position Vector2) Rectangle {
