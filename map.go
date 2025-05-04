@@ -10,8 +10,15 @@ const (
 	MaxY = 10
 )
 
+type Block int
+
+const (
+	Empty Block = iota
+	Dirt
+)
+
 var (
-	data        [MaxY][MaxX]int
+	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
 	texture_x   i32
 	texture_y   i32
@@ -22,7 +29,7 @@ var (
 func MapInit() {
 	for y := range MaxY {
 		for x := range MaxX {
-			data[y][x] = rand.Intn(2)
+			Map[y][x] = Block(rand.Intn(2))
 		}
 	}
 	dirtTexture = LoadTexture("asset/dirt.png")
@@ -39,7 +46,7 @@ func MapCollide(rec *Rectangle) bool {
 		position_y := i32(y)*texture_y + offset_y
 		t.Y = position_y
 		for x := range MaxX {
-			if data[y][x] == 1 {
+			if Map[y][x] == Dirt {
 				position_x := i32(x)*texture_x + offset_x
 				t.X = position_x
 				tile := t.ToFloat32()
@@ -61,7 +68,7 @@ func MapDraw() {
 		position_y := i32(y)*texture_y + offset_y
 		rect.Y = f32(position_y)
 		for x := range MaxX {
-			if data[y][x] == 1 {
+			if Map[y][x] == Dirt {
 				position_x := i32(x)*texture_x + offset_x
 				rect.X = f32(position_x)
 				if CheckCollisionRecs(rect, cameraRect) {
@@ -76,4 +83,8 @@ func MapIndex(position Vector2) (int, int) {
 	x := (i32(position.X) - offset_x) / texture_x
 	y := (i32(position.Y) - offset_y) / texture_y
 	return int(x), int(y)
+}
+
+func MapInside(x, y int) bool {
+	return x >= 0 && y >= 0 && x < MaxX && y < MaxY
 }

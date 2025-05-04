@@ -45,7 +45,7 @@ func PlayerCenter() Vector2 {
 	return Vector2Add(PlayerRealPosition(), Vector2Scale(PlayerRealSize(), 0.5))
 }
 
-func PlayerUpdate() {
+func PlayerPositionUpdate() {
 	dt := GetFrameTime()
 	if jumpTo != nil && PlayerPosition.Y < *jumpTo {
 		jumpTo = nil
@@ -92,6 +92,20 @@ func PlayerUpdate() {
 		PlayerPosition = positionMove
 	} else {
 		PlayerPosition.X = Round(PlayerPosition.X)
+	}
+}
+
+func PlayerUpdate() {
+	PlayerPositionUpdate()
+	p := CursorPosition()
+	x, y := MapIndex(p)
+	if MapInside(x, y) {
+		if IsMouseButtonDown(MouseButtonLeft) {
+			Map[y][x] = Empty
+		}
+		if IsMouseButtonDown(MouseButtonRight) {
+			Map[y][x] = Dirt
+		}
 	}
 }
 
