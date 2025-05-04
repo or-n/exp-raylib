@@ -34,7 +34,7 @@ func actionString(a Action) string {
 	return ""
 }
 
-func KeyString(x int32) string {
+func KeyString(x i32) string {
 	switch x {
 	case KeyW:
 		return "W"
@@ -55,7 +55,7 @@ func KeyString(x int32) string {
 }
 
 var (
-	Input = map[Action]int32{
+	Input = map[Action]i32{
 		ActionNegY:   KeyW,
 		ActionNegX:   KeyA,
 		ActionY:      KeyS,
@@ -73,7 +73,7 @@ var (
 		ActionSneak,
 		ActionSprint,
 	}
-	keys = []int32{
+	keys = []i32{
 		KeyW,
 		KeyA,
 		KeyS,
@@ -97,39 +97,39 @@ func InputUpdate() {
 	}
 }
 
-func boolI32(x bool) int32 {
-	var result int32
+func boolI32(x bool) i32 {
+	var result i32
 	if x {
 		result = 1
 	}
 	return result
 }
 
-func InputAxisX() int32 {
+func InputAxisX() i32 {
 	return boolI32(IsKeyDown(Input[ActionX])) - boolI32(IsKeyDown(Input[ActionNegX]))
 }
 
 func InputDraw() {
-	textY := int32(15)
-	textSpacing := float32(2)
-	fontSize := int32(20)
-	spacing := int32(20)
+	textY := i32(15)
+	textSpacing := f32(2)
+	fontSize := i32(20)
+	spacing := i32(20)
 	buttonSize := NewVector2(300, 50)
-	n := int32(7)
-	size := Vector2{X: buttonSize.X, Y: buttonSize.Y * float32(n)}
-	size.Y += float32(spacing * (n + 1))
-	start := Vector2{X: (WindowSize.X - size.X) * 0.5, Y: (WindowSize.Y - size.Y) * 0.5}
+	n := i32(len(actions))
+	size := NewVector2(buttonSize.X, buttonSize.Y*f32(n))
+	size.Y += f32(spacing * (n + 1))
+	start := NewVector2((WindowSize.X-size.X)*0.5, (WindowSize.Y-size.Y)*0.5)
 	title := "Configure Keys (Press to Change)"
-	titleSize := MeasureTextEx(GetFontDefault(), title, float32(fontSize), textSpacing)
+	titleSize := MeasureTextEx(GetFontDefault(), title, f32(fontSize), textSpacing)
 	startTitle := (WindowSize.X - titleSize.X) * 0.5
-	DrawText(title, int32(startTitle), int32(start.Y)+textY, fontSize, White)
-	pad := int32(40)
+	DrawText(title, i32(startTitle), i32(start.Y)+textY, fontSize, White)
+	pad := i32(40)
 	for action := range n {
-		y := (action + 1) * (int32(buttonSize.Y) + spacing)
-		p := NewVector2(start.X, start.Y+float32(y))
+		y := (action + 1) * (i32(buttonSize.Y) + spacing)
+		p := NewVector2(start.X, start.Y+f32(y))
 		DrawRectangleV(p, buttonSize, Blue)
 		text := actionString(Action(action))
-		DrawText(text, int32(start.X)+pad, int32(start.Y)+y+textY, fontSize, White)
+		DrawText(text, i32(p.X)+pad, i32(p.Y)+textY, fontSize, White)
 		key := Input[Action(action)]
 		var name string
 		if changeAction != nil && *changeAction == Action(action) {
@@ -137,9 +137,9 @@ func InputDraw() {
 		} else {
 			name = KeyString(key)
 		}
-		nameSize := MeasureTextEx(GetFontDefault(), name, float32(fontSize), 1)
-		position := NewVector2(start.X+buttonSize.X-nameSize.X-float32(pad), p.Y+float32(textY))
-		DrawTextEx(GetFontDefault(), name, position, float32(fontSize), 1, White)
+		nameSize := MeasureTextEx(GetFontDefault(), name, f32(fontSize), 1)
+		position := NewVector2(p.X+buttonSize.X-nameSize.X-f32(pad), p.Y+f32(textY))
+		DrawTextEx(GetFontDefault(), name, position, f32(fontSize), 1, White)
 		rect := Rectangle{}
 		rect.X = p.X
 		rect.Y = p.Y

@@ -2,7 +2,6 @@ package main
 
 import (
 	. "github.com/gen2brain/raylib-go/raylib"
-	"math"
 )
 
 var (
@@ -10,7 +9,7 @@ var (
 	PlayerSize     Vector2
 	PlayerTexture  Texture2D
 	grounded       bool
-	jumpTo         *float32
+	jumpTo         *f32
 )
 
 func PlayerInit() {
@@ -46,10 +45,6 @@ func PlayerCenter() Vector2 {
 	return Vector2Add(PlayerRealPosition(), Vector2Scale(PlayerRealSize(), 0.5))
 }
 
-func Round(x float32) float32 {
-	return float32(math.Round(float64(x)))
-}
-
 func PlayerUpdate() {
 	dt := GetFrameTime()
 	if jumpTo != nil && PlayerPosition.Y < *jumpTo {
@@ -78,11 +73,11 @@ func PlayerUpdate() {
 	}
 	if grounded && IsKeyPressed(Input[ActionJump]) {
 		value := PlayerPosition.Y - 1.25*16
-		jumpTo = new(float32)
+		jumpTo = new(f32)
 		*jumpTo = value
 		grounded = false
 	}
-	var speedX int32
+	var speedX i32
 	if IsKeyDown(Input[ActionSneak]) {
 		speedX = 25
 	} else if IsKeyDown(Input[ActionSprint]) {
@@ -90,7 +85,7 @@ func PlayerUpdate() {
 	} else {
 		speedX = 200
 	}
-	deltaX := float32(InputAxisX() * speedX)
+	deltaX := f32(InputAxisX() * speedX)
 	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX*dt, 0))
 	rect := PlayerGetRect(positionMove)
 	if !MapCollide(&rect) {

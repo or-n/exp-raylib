@@ -24,8 +24,8 @@ func CursorDraw() {
 			return
 		}
 	}
-	size := NewVector2(float32(cursorTexture.Width), float32(cursorTexture.Height))
-	scale := float32(0.25)
+	size := NewVector2(f32(cursorTexture.Width), f32(cursorTexture.Height))
+	scale := f32(0.25)
 	offset := Vector2Scale(size, 0.5*scale)
 	p := Vector2Subtract(cursorPosition, offset)
 	DrawTextureEx(cursorTexture, p, 0, scale, White)

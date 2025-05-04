@@ -19,7 +19,7 @@ func CameraUpdate() {
 	wheel := GetMouseWheelMove()
 	MainCamera.Offset = Vector2Scale(WindowSize, 0.5)
 	scale := 0.2 * wheel
-	zoom := float32(math.Exp(math.Log(float64(MainCamera.Zoom)) + float64(scale)))
+	zoom := f32(math.Exp(math.Log(f64(MainCamera.Zoom)) + f64(scale)))
 	if zoom < 0.125 {
 		MainCamera.Zoom = 0.125
 	} else {
@@ -27,7 +27,7 @@ func CameraUpdate() {
 	}
 }
 
-func CameraRect(offset float32) Rectangle {
+func CameraRect(offset f32) Rectangle {
 	r := Rectangle{}
 	r.Width = WindowSize.X / MainCamera.Zoom
 	r.Height = WindowSize.Y / MainCamera.Zoom
