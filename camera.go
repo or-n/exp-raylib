@@ -1,7 +1,9 @@
 package main
 
-import . "github.com/gen2brain/raylib-go/raylib"
-import "math"
+import (
+	. "github.com/gen2brain/raylib-go/raylib"
+	"math"
+)
 
 var (
 	MainCamera Camera2D

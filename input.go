@@ -1,6 +1,8 @@
 package main
 
-import . "github.com/gen2brain/raylib-go/raylib"
+import (
+	. "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Action int
 

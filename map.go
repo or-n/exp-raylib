@@ -1,7 +1,9 @@
 package main
 
-import . "github.com/gen2brain/raylib-go/raylib"
-import "math/rand"
+import (
+	. "github.com/gen2brain/raylib-go/raylib"
+	"math/rand"
+)
 
 const (
 	MaxX = 100
