@@ -7,13 +7,13 @@ with pkgs; pkgs.mkShell rec {
     # xorg.libX11.dev
     libGL
 
-    # raylib
-    # glfw
-    # xorg.libXrandr
-    # xorg.libXinerama
-    # xorg.libXcursor
-    # xorg.libXi
-    # pkg-config
+    raylib
+    glfw
+    xorg.libXrandr
+    xorg.libXinerama
+    xorg.libXcursor
+    xorg.libXi
+    pkg-config
 
     wayland
     wayland-protocols
