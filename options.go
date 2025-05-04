@@ -37,7 +37,7 @@ func InputOptionsDraw() {
 	size := NewVector2(buttonSize.X, buttonSize.Y*f32(n))
 	size.Y += f32(spacing * (n + 1))
 	start := NewVector2((WindowSize.X-size.X)*0.5, (WindowSize.Y-size.Y)*0.5)
-	title := "Configure Keys (Press to Change)"
+	title := Lang[ConfigureKeys]
 	titleSize := MeasureTextEx(GetFontDefault(), title, f32(fontSize), textSpacing)
 	startTitle := (WindowSize.X - titleSize.X) * 0.5
 	DrawText(title, i32(startTitle), i32(start.Y)+textY, fontSize, White)
@@ -74,5 +74,5 @@ func InputOptionsDraw() {
 
 func MusicOptionsDraw() {
 	rect := NewRectangle(WindowSize.X*0.5, 200, 400, 50)
-	MusicVolume = gui.Slider(rect, "Music Volume", "", MusicVolume, 0, 1)
+	MusicVolume = gui.Slider(rect, Lang[Volume], "", MusicVolume, 0, 1)
 }

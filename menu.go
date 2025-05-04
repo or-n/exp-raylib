@@ -14,13 +14,6 @@ const (
 	StateExit
 )
 
-const (
-	start   = "start"
-	restart = "restart"
-	options = "options"
-	exit    = "exit"
-)
-
 var (
 	SimulationState State
 	button          Vector2
@@ -36,21 +29,21 @@ func MenuDraw() {
 	x := (WindowSize.X - button.X) * 0.5
 	y := (WindowSize.Y - button.Y*4) * 0.5
 	rect := NewRectangle(x, y, button.X, button.Y)
-	if gui.Button(rect, "Start") {
+	if gui.Button(rect, Lang[Start]) {
 		SimulationState = StateGame
 	}
 	rect.Y += button.Y
-	if gui.Button(rect, "Restart") {
+	if gui.Button(rect, Lang[Restart]) {
 		PlayerRestart()
 		CameraRestart()
 		SimulationState = StateGame
 	}
 	rect.Y += button.Y
-	if gui.Button(rect, "Options") {
+	if gui.Button(rect, Lang[Options]) {
 		SimulationState = StateOptions
 	}
 	rect.Y += button.Y
-	if gui.Button(rect, "Exit") {
+	if gui.Button(rect, Lang[Exit]) {
 		SimulationState = StateExit
 	}
 }
