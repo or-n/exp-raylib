@@ -39,17 +39,17 @@ func MenuDraw() {
 	if gui.Button(rect, "Start") {
 		SimulationState = StateGame
 	}
-	rect = NewRectangle(x, y+button.Y, button.X, button.Y)
+	rect.Y += button.Y
 	if gui.Button(rect, "Restart") {
 		PlayerRestart()
 		CameraRestart()
 		SimulationState = StateGame
 	}
-	rect = NewRectangle(x, y+button.Y*2, button.X, button.Y)
+	rect.Y += button.Y
 	if gui.Button(rect, "Options") {
 		SimulationState = StateOptions
 	}
-	rect = NewRectangle(x, y+button.Y*3, button.X, button.Y)
+	rect.Y += button.Y
 	if gui.Button(rect, "Exit") {
 		SimulationState = StateExit
 	}

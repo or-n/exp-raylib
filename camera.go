@@ -22,11 +22,7 @@ func CameraUpdate() {
 	MainCamera.Offset = Vector2Scale(WindowSize, 0.5)
 	scale := 0.2 * wheel
 	zoom := f32(math.Exp(math.Log(f64(MainCamera.Zoom)) + f64(scale)))
-	if zoom < 0.125 {
-		MainCamera.Zoom = 0.125
-	} else {
-		MainCamera.Zoom = min(zoom, 64)
-	}
+	MainCamera.Zoom = Clamp(zoom, 0.125, 64)
 }
 
 func CameraRect(offset f32) Rectangle {
