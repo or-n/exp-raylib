@@ -16,3 +16,11 @@ type u64 = uint64
 func Round(x f32) f32 {
 	return f32(math.Round(f64(x)))
 }
+
+func BoolI32(x bool) i32 {
+	var result i32
+	if x {
+		result = 1
+	}
+	return result
+}

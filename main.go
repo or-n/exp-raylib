@@ -41,10 +41,10 @@ func main() {
 			EndMode2D()
 		case StateOptions:
 			ShowCursor()
-			InputDraw()
+			OptionsUpdate()
+			OptionsDraw()
 		}
 		EndDrawing()
-		InputUpdate()
 		MusicUpdate()
 	}
 }

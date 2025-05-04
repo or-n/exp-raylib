@@ -53,10 +53,12 @@ func MusicUpdate() {
 	timeSinceRhythm += dt
 	timeSinceMelody += dt
 	if timeSinceRhythm >= rhythmInterval {
+		SetSoundVolume(rhythm, MusicVolume)
 		PlaySound(rhythm)
 		timeSinceRhythm = 0
 	}
 	if timeSinceMelody >= melodyInterval {
+		SetSoundVolume(melody[currentMelodyIndex], MusicVolume)
 		PlaySound(melody[currentMelodyIndex])
 		currentMelodyIndex = (currentMelodyIndex + 1) % len(melody)
 		timeSinceMelody = 0
