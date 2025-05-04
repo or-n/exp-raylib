@@ -71,7 +71,7 @@ func PlayerPositionUpdate() {
 			PlayerPosition = positionWithGravity
 		}
 	}
-	if grounded && IsKeyPressed(Input[ActionJump]) {
+	if grounded && IsKeyDown(Input[ActionJump]) {
 		value := PlayerPosition.Y - 1.25*16
 		jumpTo = new(f32)
 		*jumpTo = value
@@ -100,6 +100,11 @@ func PlayerUpdate() {
 	p := CursorPosition()
 	x, y := MapIndex(p)
 	if MapInsideX(x) && MapInsideY(y) {
+		r := MapRect(x, y)
+		p := PlayerGetRect(PlayerPosition)
+		if CheckCollisionRecs(p, r) {
+			return
+		}
 		if IsMouseButtonDown(MouseButtonLeft) {
 			Map[y][x] = Empty
 		}

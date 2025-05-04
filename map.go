@@ -118,3 +118,12 @@ func MapInsideX(x int) bool {
 func MapInsideY(y int) bool {
 	return y >= 0 && y < MaxY
 }
+
+func MapRect(x, y int) Rectangle {
+	r := Rectangle{}
+	r.X = f32(i32(x)*texture_x + offset_x)
+	r.Y = f32(i32(y)*texture_y + offset_y)
+	r.Width = f32(texture_x)
+	r.Height = f32(texture_y)
+	return r
+}
