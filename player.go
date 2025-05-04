@@ -99,7 +99,7 @@ func PlayerUpdate() {
 	PlayerPositionUpdate()
 	p := CursorPosition()
 	x, y := MapIndex(p)
-	if MapInside(x, y) {
+	if MapInsideX(x) && MapInsideY(y) {
 		if IsMouseButtonDown(MouseButtonLeft) {
 			Map[y][x] = Empty
 		}

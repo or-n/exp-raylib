@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	MaxX = 100
-	MaxY = 10
+	MaxX = 10000
+	MaxY = 256
 )
 
 type Block int
@@ -42,13 +42,24 @@ func MapCollide(rec *Rectangle) bool {
 	t := RectangleInt32{}
 	t.Width = texture_x
 	t.Height = texture_y
+	center := RectCenter(*rec)
+	cx, cy := MapIndex(center)
+	n := 9
 	for y := range MaxY {
-		position_y := i32(y)*texture_y + offset_y
+		iy := y - n/2 + cy
+		if !MapInsideY(iy) {
+			continue
+		}
+		position_y := i32(iy)*texture_y + offset_y
 		t.Y = position_y
-		for x := range MaxX {
-			if Map[y][x] == Dirt {
-				position_x := i32(x)*texture_x + offset_x
-				t.X = position_x
+		for x := range n {
+			ix := x - n/2 + cx
+			if !MapInsideX(ix) {
+				continue
+			}
+			position_x := i32(ix)*texture_x + offset_x
+			t.X = position_x
+			if Map[iy][ix] == Dirt {
 				tile := t.ToFloat32()
 				if CheckCollisionRecs(tile, *rec) {
 					return true
@@ -59,18 +70,33 @@ func MapCollide(rec *Rectangle) bool {
 	return false
 }
 
+func RectCenter(r Rectangle) Vector2 {
+	return NewVector2(r.X+r.Width*0.5, r.Y+r.Height*0.5)
+}
+
 func MapDraw() {
 	cameraRect := CameraRect(0)
 	rect := Rectangle{}
 	rect.Width = f32(texture_x)
 	rect.Height = f32(texture_y)
-	for y := range MaxY {
-		position_y := i32(y)*texture_y + offset_y
+	center := RectCenter(cameraRect)
+	cx, cy := MapIndex(center)
+	n := 61
+	for y := range n {
+		iy := y - n/2 + cy
+		if !MapInsideY(iy) {
+			continue
+		}
+		position_y := i32(iy)*texture_y + offset_y
 		rect.Y = f32(position_y)
-		for x := range MaxX {
-			if Map[y][x] == Dirt {
-				position_x := i32(x)*texture_x + offset_x
-				rect.X = f32(position_x)
+		for x := range n {
+			ix := x - n/2 + cx
+			if !MapInsideX(ix) {
+				continue
+			}
+			position_x := i32(ix)*texture_x + offset_x
+			rect.X = f32(position_x)
+			if Map[iy][ix] == Dirt {
 				if CheckCollisionRecs(rect, cameraRect) {
 					DrawTexture(dirtTexture, position_x, position_y, White)
 				}
@@ -85,6 +111,10 @@ func MapIndex(position Vector2) (int, int) {
 	return int(x), int(y)
 }
 
-func MapInside(x, y int) bool {
-	return x >= 0 && y >= 0 && x < MaxX && y < MaxY
+func MapInsideX(x int) bool {
+	return x >= 0 && x < MaxX
+}
+
+func MapInsideY(y int) bool {
+	return y >= 0 && y < MaxY
 }
