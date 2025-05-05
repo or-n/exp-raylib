@@ -33,7 +33,6 @@ func main() {
 		}
 		BeginDrawing()
 		ClearBackground(WindowBg)
-		DrawFPS(30, 30)
 		switch SimulationState {
 		case StateMenu:
 			ShowCursor()
@@ -54,6 +53,11 @@ func main() {
 			OptionsUpdate()
 			OptionsDraw()
 		}
+		position := NewVector2(20, 25)
+		size := NewVector2(100, 30)
+		color := NewColor(0, 0, 0, 127)
+		DrawRectangleV(position, size, color)
+		DrawFPS(30, 30)
 		EndDrawing()
 		MusicUpdate()
 	}

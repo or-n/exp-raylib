@@ -11,7 +11,6 @@ func Save(filename string, data any) error {
 		return err
 	}
 	defer file.Close()
-
 	encoder := gob.NewEncoder(file)
 	return encoder.Encode(data)
 }
