@@ -1,13 +1,17 @@
 package main
 
 import (
+	"encoding/gob"
+	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 	"math/rand"
+	"os"
 )
 
 const (
-	MaxX = 10000
-	MaxY = 256
+	MaxX    = 10000
+	MaxY    = 256
+	MapFile = "asset/map.go"
 )
 
 type Block int
@@ -26,10 +30,38 @@ var (
 	offset_y    i32
 )
 
+func MapSave(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(Map)
+	return err
+}
+
+func MapLoad(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	decoder := gob.NewDecoder(file)
+	err = decoder.Decode(&Map)
+	return err
+}
+
 func MapInit() {
-	for y := range MaxY {
-		for x := range MaxX {
-			Map[y][x] = Block(rand.Intn(2))
+	if err := MapLoad(MapFile); err != nil {
+		fmt.Println("Error loading map:", err)
+		for y := range MaxY {
+			for x := range MaxX {
+				Map[y][x] = Block(rand.Intn(2))
+			}
+		}
+		if err := MapSave(MapFile); err != nil {
+			fmt.Println("Failed to save map:", err)
 		}
 	}
 	dirtTexture = LoadTexture("asset/dirt.png")

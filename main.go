@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -8,7 +9,15 @@ func main() {
 	InitAudioDevice()
 	MusicInit()
 	InitWindow(1920, 1080, "Hello")
-	defer CloseWindow()
+	defer func() {
+		if err := MapSave(MapFile); err != nil {
+			fmt.Println("Failed to save map:", err)
+		}
+		if err := PlayerSave(PlayerFile); err != nil {
+			fmt.Println("Failed to save player:", err)
+		}
+		CloseWindow()
+	}()
 	WindowSize = MonitorSize()
 	ToggleFullscreen()
 	SetTargetFPS(600)
@@ -32,14 +41,14 @@ func main() {
 		case StateGame:
 			HideCursor()
 			CameraUpdate()
-			PlayerUpdate()
-			MainCamera.Target = PlayerCenter()
+			PlayerUpdate(&MainPlayer)
+			MainCamera.Target = PlayerCenter(&MainPlayer)
 			BeginMode2D(MainCamera)
 			MapDraw()
-			PlayerDraw()
+			PlayerDraw(&MainPlayer)
 			CursorDraw()
 			EndMode2D()
-			PlayerOverlayDraw()
+			PlayerOverlayDraw(&MainPlayer)
 		case StateOptions:
 			ShowCursor()
 			OptionsUpdate()

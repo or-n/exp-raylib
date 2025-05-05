@@ -1,29 +1,68 @@
 package main
 
 import (
+	"encoding/gob"
+	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
+	"os"
 	"strconv"
 )
 
 var (
-	PlayerPosition  Vector2
-	PlayerSize      Vector2
-	PlayerTexture   Texture2D
-	grounded        bool
-	jumpTo          *f32
-	playerInventory int
+	PlayerSize    Vector2
+	PlayerTexture Texture2D
+	MainPlayer    Player
+	PlayerFile    = "asset/player.go"
 )
 
+type Player struct {
+	Inventory int
+	Position  Vector2
+	Grounded  bool
+	JumpTo    *float32
+}
+
+func PlayerSave(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(MainPlayer)
+	return err
+}
+
+func PlayerLoad(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	decoder := gob.NewDecoder(file)
+	err = decoder.Decode(&MainPlayer)
+	return err
+}
+
 func PlayerInit() {
-	PlayerPosition = NewVector2(0, -100)
+	if err := PlayerLoad(PlayerFile); err != nil {
+		fmt.Println("Error loading player:", err)
+		MainPlayer.Position = NewVector2(0, -100)
+		MainPlayer.Grounded = false
+		MainPlayer.JumpTo = nil
+		MainPlayer.Inventory = 0
+		if err := PlayerSave(PlayerFile); err != nil {
+			fmt.Println("Failed to save player:", err)
+		}
+	}
 	PlayerSize = NewVector2(16, 32)
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
 func PlayerRestart() {
-	PlayerPosition = NewVector2(0, -100)
-	grounded = false
-	jumpTo = nil
+	MainPlayer.Position = NewVector2(0, -100)
+	MainPlayer.Grounded = false
+	MainPlayer.JumpTo = nil
 }
 
 func PlayerGetRect(position Vector2) Rectangle {
@@ -35,49 +74,49 @@ func PlayerGetRect(position Vector2) Rectangle {
 	return rec
 }
 
-func PlayerRealPosition() Vector2 {
-	return Vector2Add(PlayerPosition, NewVector2(1, 2))
+func PlayerRealPosition(player *Player) Vector2 {
+	return Vector2Add(player.Position, NewVector2(1, 2))
 }
 
 func PlayerRealSize() Vector2 {
 	return Vector2Subtract(PlayerSize, NewVector2(2, 2))
 }
 
-func PlayerCenter() Vector2 {
-	return Vector2Add(PlayerRealPosition(), Vector2Scale(PlayerRealSize(), 0.5))
+func PlayerCenter(player *Player) Vector2 {
+	return Vector2Add(PlayerRealPosition(player), Vector2Scale(PlayerRealSize(), 0.5))
 }
 
-func PlayerPositionUpdate() {
+func PlayerPositionUpdate(player *Player) {
 	dt := GetFrameTime()
-	if jumpTo != nil && PlayerPosition.Y < *jumpTo {
-		jumpTo = nil
+	if player.JumpTo != nil && player.Position.Y < *player.JumpTo {
+		player.JumpTo = nil
 	}
-	if jumpTo != nil {
-		positionUp := Vector2Add(PlayerPosition, NewVector2(0, -100*dt))
+	if player.JumpTo != nil {
+		positionUp := Vector2Add(player.Position, NewVector2(0, -100*dt))
 		rect := PlayerGetRect(positionUp)
 		if MapCollide(&rect) {
-			jumpTo = nil
-			PlayerPosition.Y = Round(PlayerPosition.Y)
+			player.JumpTo = nil
+			player.Position.Y = Round(player.Position.Y)
 		} else {
-			PlayerPosition = positionUp
+			player.Position = positionUp
 		}
 	}
-	if jumpTo == nil {
-		positionWithGravity := Vector2Add(PlayerPosition, NewVector2(0, 200*dt))
+	if player.JumpTo == nil {
+		positionWithGravity := Vector2Add(player.Position, NewVector2(0, 200*dt))
 		rect := PlayerGetRect(positionWithGravity)
 		if MapCollide(&rect) {
-			grounded = true
-			PlayerPosition.Y = Round(PlayerPosition.Y)
+			player.Grounded = true
+			player.Position.Y = Round(player.Position.Y)
 		} else {
-			grounded = false
-			PlayerPosition = positionWithGravity
+			player.Grounded = false
+			player.Position = positionWithGravity
 		}
 	}
-	if grounded && IsKeyDown(Input[ActionJump]) {
-		value := PlayerPosition.Y - 1.25*16
-		jumpTo = new(f32)
-		*jumpTo = value
-		grounded = false
+	if player.Grounded && IsKeyDown(Input[ActionJump]) {
+		value := player.Position.Y - 1.25*16
+		player.JumpTo = new(f32)
+		*player.JumpTo = value
+		player.Grounded = false
 	}
 	var speedX i32
 	if IsKeyDown(Input[ActionSneak]) {
@@ -88,42 +127,42 @@ func PlayerPositionUpdate() {
 		speedX = 200
 	}
 	deltaX := f32(InputAxisX() * speedX)
-	positionMove := Vector2Add(PlayerPosition, NewVector2(deltaX*dt, 0))
+	positionMove := Vector2Add(player.Position, NewVector2(deltaX*dt, 0))
 	rect := PlayerGetRect(positionMove)
 	if !MapCollide(&rect) {
-		PlayerPosition = positionMove
+		player.Position = positionMove
 	} else {
-		PlayerPosition.X = Round(PlayerPosition.X)
+		player.Position.X = Round(player.Position.X)
 	}
 }
 
-func PlayerUpdate() {
-	PlayerPositionUpdate()
+func PlayerUpdate(player *Player) {
+	PlayerPositionUpdate(player)
 	p := CursorPosition()
 	x, y := MapIndex(p)
 	if MapInsideX(x) && MapInsideY(y) {
 		r := MapRect(x, y)
-		p := PlayerGetRect(PlayerPosition)
+		p := PlayerGetRect(player.Position)
 		if CheckCollisionRecs(p, r) {
 			return
 		}
 		if IsMouseButtonDown(MouseButtonLeft) && Map[y][x] != Empty {
 			Map[y][x] = Empty
-			playerInventory += 1
+			player.Inventory += 1
 		}
-		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && playerInventory > 0 {
+		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && player.Inventory > 0 {
 			Map[y][x] = Dirt
-			playerInventory -= 1
+			player.Inventory -= 1
 		}
 	}
 }
 
-func PlayerOverlayDraw() {
-	inventory := strconv.Itoa(playerInventory)
+func PlayerOverlayDraw(player *Player) {
+	inventory := strconv.Itoa(player.Inventory)
 	DrawText(inventory, 30, 100, 20, White)
 }
 
-func PlayerDraw() {
+func PlayerDraw(player *Player) {
 	rect := PlayerGetRect(NewVector2(0, 0))
-	DrawTextureRec(PlayerTexture, rect, PlayerRealPosition(), White)
+	DrawTextureRec(PlayerTexture, rect, PlayerRealPosition(player), White)
 }
