@@ -10,10 +10,10 @@ func main() {
 	MusicInit()
 	InitWindow(1920, 1080, "Hello")
 	defer func() {
-		if err := MapSave(MapFile); err != nil {
+		if err := Save(MapFile, Map); err != nil {
 			fmt.Println("Failed to save map:", err)
 		}
-		if err := PlayerSave(PlayerFile); err != nil {
+		if err := Save(PlayerFile, MainPlayer); err != nil {
 			fmt.Println("Failed to save player:", err)
 		}
 		CloseWindow()

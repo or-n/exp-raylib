@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/gob"
 	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
-	"os"
 	"strconv"
 )
 
@@ -22,36 +20,14 @@ type Player struct {
 	JumpTo    *float32
 }
 
-func PlayerSave(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	encoder := gob.NewEncoder(file)
-	err = encoder.Encode(MainPlayer)
-	return err
-}
-
-func PlayerLoad(filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(&MainPlayer)
-	return err
-}
-
 func PlayerInit() {
-	if err := PlayerLoad(PlayerFile); err != nil {
+	if err := Load(PlayerFile, &MainPlayer); err != nil {
 		fmt.Println("Error loading player:", err)
 		MainPlayer.Position = NewVector2(0, -100)
 		MainPlayer.Grounded = false
 		MainPlayer.JumpTo = nil
 		MainPlayer.Inventory = 0
-		if err := PlayerSave(PlayerFile); err != nil {
+		if err := Save(PlayerFile, MainPlayer); err != nil {
 			fmt.Println("Failed to save player:", err)
 		}
 	}
