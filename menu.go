@@ -16,16 +16,15 @@ const (
 
 var (
 	SimulationState State
-	button          Vector2
+	button          = NewVector2(200, 100)
 )
 
 func MenuInit() {
 	SimulationState = StateMenu
-	button = NewVector2(200, 100)
+	gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
 }
 
 func MenuDraw() {
-	gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
 	x := (WindowSize.X - button.X) * 0.5
 	y := (WindowSize.Y - button.Y*4) * 0.5
 	rect := NewRectangle(x, y, button.X, button.Y)

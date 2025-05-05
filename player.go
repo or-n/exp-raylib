@@ -118,15 +118,15 @@ func PlayerUpdate(player *Player) {
 	x, y := MapIndex(p)
 	if MapInsideX(x) && MapInsideY(y) {
 		r := MapRect(x, y)
-		p := PlayerGetRect(player.Position)
-		if CheckCollisionRecs(p, r) {
-			return
-		}
 		if IsMouseButtonDown(MouseButtonLeft) && Map[y][x] != Empty {
 			Map[y][x] = Empty
 			player.Inventory += 1
 		}
 		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && player.Inventory > 0 {
+			p := PlayerGetRect(player.Position)
+			if CheckCollisionRecs(p, r) {
+				return
+			}
 			Map[y][x] = Dirt
 			player.Inventory -= 1
 		}
