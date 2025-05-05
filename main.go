@@ -16,11 +16,15 @@ func main() {
 		if err := Save(PlayerFile, MainPlayer); err != nil {
 			fmt.Println("Failed to save player:", err)
 		}
+		if err := Save(InputFile, Input); err != nil {
+			fmt.Println("Failed to save input:", err)
+		}
 		CloseWindow()
 	}()
 	WindowSize = MonitorSize()
 	ToggleFullscreen()
 	SetTargetFPS(600)
+	InputInit()
 	PlayerInit()
 	MapInit()
 	CameraInit()

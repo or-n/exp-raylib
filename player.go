@@ -10,7 +10,7 @@ var (
 	PlayerSize    Vector2
 	PlayerTexture Texture2D
 	MainPlayer    Player
-	PlayerFile    = "asset/player.go"
+	PlayerFile    = "asset/player.gob"
 )
 
 type Player struct {

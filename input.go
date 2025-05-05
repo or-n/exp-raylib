@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -57,16 +58,9 @@ func KeyString(x i32) string {
 }
 
 var (
-	Input = map[Action]i32{
-		ActionNegY:   KeyW,
-		ActionNegX:   KeyA,
-		ActionY:      KeyS,
-		ActionX:      KeyD,
-		ActionJump:   KeyW,
-		ActionSneak:  KeyLeftShift,
-		ActionSprint: KeyLeftControl,
-	}
-	keys = []i32{
+	InputFile = "asset/input.gob"
+	Input     map[Action]i32
+	keys      = []i32{
 		KeyW,
 		KeyA,
 		KeyS,
@@ -76,6 +70,24 @@ var (
 		KeySpace,
 	}
 )
+
+func InputInit() {
+	if err := Load(InputFile, &Input); err != nil {
+		fmt.Println("Error loading input:", err)
+		Input = map[Action]i32{
+			ActionNegY:   KeyW,
+			ActionNegX:   KeyA,
+			ActionY:      KeyS,
+			ActionX:      KeyD,
+			ActionJump:   KeyW,
+			ActionSneak:  KeyLeftShift,
+			ActionSprint: KeyLeftControl,
+		}
+		if err := Save(InputFile, Input); err != nil {
+			fmt.Println("Failed to save input:", err)
+		}
+	}
+}
 
 func InputAxisX() i32 {
 	return BoolI32(IsKeyDown(Input[ActionX])) - BoolI32(IsKeyDown(Input[ActionNegX]))

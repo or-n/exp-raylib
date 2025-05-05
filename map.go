@@ -9,7 +9,7 @@ import (
 const (
 	MaxX    = 10000
 	MaxY    = 256
-	MapFile = "asset/map.go"
+	MapFile = "asset/map.gob"
 )
 
 type Block int
