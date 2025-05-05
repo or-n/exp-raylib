@@ -28,5 +28,5 @@ var (
 		ConfigureKeys: "Konfiguruj Klawisze (Naciśnij by Zmienić)",
 		Volume:        "Głośność Muzyki",
 	}
-	Lang = PL
+	Lang = EN
 )

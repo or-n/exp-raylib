@@ -39,6 +39,7 @@ func main() {
 			PlayerDraw()
 			CursorDraw()
 			EndMode2D()
+			PlayerOverlayDraw()
 		case StateOptions:
 			ShowCursor()
 			OptionsUpdate()

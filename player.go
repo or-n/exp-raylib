@@ -2,14 +2,16 @@ package main
 
 import (
 	. "github.com/gen2brain/raylib-go/raylib"
+	"strconv"
 )
 
 var (
-	PlayerPosition Vector2
-	PlayerSize     Vector2
-	PlayerTexture  Texture2D
-	grounded       bool
-	jumpTo         *f32
+	PlayerPosition  Vector2
+	PlayerSize      Vector2
+	PlayerTexture   Texture2D
+	grounded        bool
+	jumpTo          *f32
+	playerInventory int
 )
 
 func PlayerInit() {
@@ -105,13 +107,20 @@ func PlayerUpdate() {
 		if CheckCollisionRecs(p, r) {
 			return
 		}
-		if IsMouseButtonDown(MouseButtonLeft) {
+		if IsMouseButtonDown(MouseButtonLeft) && Map[y][x] != Empty {
 			Map[y][x] = Empty
+			playerInventory += 1
 		}
-		if IsMouseButtonDown(MouseButtonRight) {
+		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && playerInventory > 0 {
 			Map[y][x] = Dirt
+			playerInventory -= 1
 		}
 	}
+}
+
+func PlayerOverlayDraw() {
+	inventory := strconv.Itoa(playerInventory)
+	DrawText(inventory, 30, 100, 20, White)
 }
 
 func PlayerDraw() {
