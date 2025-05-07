@@ -29,7 +29,6 @@ func OptionsDraw() {
 
 func InputOptionsDraw() {
 	textY := i32(15)
-	textSpacing := f32(2)
 	fontSize := i32(20)
 	spacing := i32(20)
 	buttonSize := NewVector2(300, 50)
@@ -38,16 +37,16 @@ func InputOptionsDraw() {
 	size.Y += f32(spacing * (n + 1))
 	start := NewVector2((WindowSize.X-size.X)*0.5, (WindowSize.Y-size.Y)*0.5)
 	title := Lang[ConfigureKeys]
-	titleSize := MeasureTextEx(GetFontDefault(), title, f32(fontSize), textSpacing)
+	titleSize := MeasureTextEx(MainFont, title, f32(fontSize), 2)
 	startTitle := (WindowSize.X - titleSize.X) * 0.5
-	DrawText(title, i32(startTitle), i32(start.Y)+textY, fontSize, White)
+	DrawTextEx(MainFont, title, NewVector2(startTitle, start.Y+f32(textY)), f32(fontSize), 1, White)
 	pad := i32(40)
 	for action := range n {
 		y := (action + 1) * (i32(buttonSize.Y) + spacing)
 		p := NewVector2(start.X, start.Y+f32(y))
 		DrawRectangleV(p, buttonSize, Blue)
 		text := actionString(Action(action))
-		DrawText(text, i32(p.X)+pad, i32(p.Y)+textY, fontSize, White)
+		DrawTextEx(MainFont, text, NewVector2(p.X+f32(pad), p.Y+f32(textY)), f32(fontSize), 1, White)
 		key := Input[Action(action)]
 		var name string
 		if changeAction != nil && *changeAction == Action(action) {
@@ -55,9 +54,9 @@ func InputOptionsDraw() {
 		} else {
 			name = KeyString(key)
 		}
-		nameSize := MeasureTextEx(GetFontDefault(), name, f32(fontSize), 1)
+		nameSize := MeasureTextEx(MainFont, name, f32(fontSize), 1)
 		position := NewVector2(p.X+buttonSize.X-nameSize.X-f32(pad), p.Y+f32(textY))
-		DrawTextEx(GetFontDefault(), name, position, f32(fontSize), 1, White)
+		DrawTextEx(MainFont, name, position, f32(fontSize), 1, White)
 		rect := Rectangle{}
 		rect.X = p.X
 		rect.Y = p.Y

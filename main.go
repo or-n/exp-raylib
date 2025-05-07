@@ -29,6 +29,7 @@ func main() {
 	MapInit()
 	CameraInit()
 	CursorInit()
+	FontInit()
 	MenuInit()
 	SetExitKey(0)
 	for !WindowShouldClose() && SimulationState != StateExit {

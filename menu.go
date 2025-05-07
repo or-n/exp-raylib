@@ -22,6 +22,7 @@ var (
 func MenuInit() {
 	SimulationState = StateMenu
 	gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
+	gui.SetFont(MainFont)
 }
 
 func MenuDraw() {
