@@ -32,8 +32,7 @@ func main() {
 	FontInit()
 	MenuInit()
 	SetExitKey(0)
-	// NoiseGenerate(i32(WindowSize.X), i32(WindowSize.Y), 0.02)
-	NoiseGenerate(i32(WindowSize.X), i32(WindowSize.Y), 20)
+	NoiseGenerate(int(WindowSize.X), int(WindowSize.Y), 20)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		if IsKeyDown(KeyEscape) {
 			SimulationState = StateMenu
