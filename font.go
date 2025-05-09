@@ -10,8 +10,9 @@ var (
 	symbols    = []rune(" .,!?:;_()")
 	codepoints = append(append(en, pl...), symbols...)
 	MainFont   Font
+	fontFile   = "asset/FiraCode-Bold.ttf"
 )
 
 func FontInit() {
-	MainFont = LoadFontEx("asset/FiraCode-Bold.ttf", 32, codepoints, i32(len(codepoints)))
+	MainFont = LoadFontEx(fontFile, 32, codepoints, i32(len(codepoints)))
 }

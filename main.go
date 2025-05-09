@@ -32,6 +32,8 @@ func main() {
 	FontInit()
 	MenuInit()
 	SetExitKey(0)
+	// NoiseGenerate(i32(WindowSize.X), i32(WindowSize.Y), 0.02)
+	NoiseGenerate(i32(WindowSize.X), i32(WindowSize.Y), 20)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		if IsKeyDown(KeyEscape) {
 			SimulationState = StateMenu
@@ -41,6 +43,7 @@ func main() {
 		switch SimulationState {
 		case StateMenu:
 			ShowCursor()
+			NoiseDraw()
 			MenuDraw()
 		case StateGame:
 			HideCursor()
