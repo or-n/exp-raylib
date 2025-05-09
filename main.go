@@ -26,13 +26,13 @@ func main() {
 	SetTargetFPS(600)
 	InputInit()
 	PlayerInit()
+	NoiseInit()
 	MapInit()
 	CameraInit()
 	CursorInit()
 	FontInit()
 	MenuInit()
 	SetExitKey(0)
-	NoiseGenerate(int(WindowSize.X), int(WindowSize.Y), 20)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		if IsKeyDown(KeyEscape) {
 			SimulationState = StateMenu
@@ -42,7 +42,6 @@ func main() {
 		switch SimulationState {
 		case StateMenu:
 			ShowCursor()
-			NoiseDraw()
 			MenuDraw()
 		case StateGame:
 			HideCursor()

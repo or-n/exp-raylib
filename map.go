@@ -22,10 +22,11 @@ const (
 var (
 	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
-	texture_x   i32
-	texture_y   i32
-	offset_x    i32
-	offset_y    i32
+	texture_x   = i32(16)
+	texture_y   = i32(16)
+	offset_x    = -i32(MaxX) * texture_x / 2
+	offset_y    = i32(0)
+	noise_scale = 0.01
 )
 
 func MapInit() {
@@ -33,7 +34,15 @@ func MapInit() {
 		fmt.Println("Error loading map:", err)
 		for y := range MaxY {
 			for x := range MaxX {
-				Map[y][x] = Block(rand.Intn(2))
+				n := OctaveNoise(f64(x)*noise_scale, 0, 8, 0.5)
+				var block Block
+				if f64(MaxY-1-y) <= f64(MaxY/2)+n*64 {
+					r := rand.Intn(8)
+					if r > 0 {
+						block = Dirt
+					}
+				}
+				Map[y][x] = Block(block)
 			}
 		}
 		if err := Save(MapFile, Map); err != nil {
@@ -41,9 +50,6 @@ func MapInit() {
 		}
 	}
 	dirtTexture = LoadTexture("asset/dirt.png")
-	texture_x = 16
-	texture_y = 16
-	offset_x = -i32(MaxX) * texture_x / 2
 }
 
 func MapCollide(rec *Rectangle) bool {

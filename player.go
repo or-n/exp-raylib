@@ -23,7 +23,7 @@ type Player struct {
 func PlayerInit() {
 	if err := Load(PlayerFile, &MainPlayer); err != nil {
 		fmt.Println("Error loading player:", err)
-		MainPlayer.Position = NewVector2(0, -100)
+		MainPlayer.Position = NewVector2(0, f32(100*texture_y))
 		MainPlayer.Grounded = false
 		MainPlayer.JumpTo = nil
 		MainPlayer.Inventory = 0
@@ -36,7 +36,7 @@ func PlayerInit() {
 }
 
 func PlayerRestart() {
-	MainPlayer.Position = NewVector2(0, -100)
+	MainPlayer.Position = NewVector2(0, f32(100*texture_y))
 	MainPlayer.Grounded = false
 	MainPlayer.JumpTo = nil
 }
@@ -136,6 +136,11 @@ func PlayerUpdate(player *Player) {
 func PlayerOverlayDraw(player *Player) {
 	inventory := strconv.Itoa(player.Inventory)
 	DrawText(inventory, 30, 100, 20, White)
+	p := PlayerCenter(player)
+	x := strconv.Itoa(int(p.X / f32(texture_x)))
+	y := strconv.Itoa(int(p.Y / f32(texture_y)))
+	DrawText(x, 200, 30, 20, White)
+	DrawText(y, 250, 30, 20, White)
 }
 
 func PlayerDraw(player *Player) {
