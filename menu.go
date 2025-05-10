@@ -34,9 +34,9 @@ func MenuDraw() {
 	}
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Restart]) {
-		PlayerRestart()
-		CameraRestart()
 		SimulationState = StateGame
+		MainAccount.balance = 1000
+		MainAccount.decided = false
 	}
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Options]) {

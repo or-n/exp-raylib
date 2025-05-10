@@ -10,12 +10,6 @@ func main() {
 	MusicInit()
 	InitWindow(1920, 1080, "Hello")
 	defer func() {
-		if err := Save(MapFile, Map); err != nil {
-			fmt.Println("Failed to save map:", err)
-		}
-		if err := Save(PlayerFile, MainPlayer); err != nil {
-			fmt.Println("Failed to save player:", err)
-		}
 		if err := Save(InputFile, Input); err != nil {
 			fmt.Println("Failed to save input:", err)
 		}
@@ -25,13 +19,11 @@ func main() {
 	ToggleFullscreen()
 	SetTargetFPS(600)
 	InputInit()
-	PlayerInit()
 	NoiseInit()
-	MapInit()
-	CameraInit()
-	CursorInit()
 	FontInit()
 	MenuInit()
+	EventNew()
+	AccountInit(&MainAccount)
 	SetExitKey(0)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		if IsKeyDown(KeyEscape) {
@@ -41,21 +33,12 @@ func main() {
 		ClearBackground(WindowBg)
 		switch SimulationState {
 		case StateMenu:
-			ShowCursor()
 			MenuDraw()
 		case StateGame:
-			HideCursor()
-			CameraUpdate()
-			PlayerUpdate(&MainPlayer)
-			MainCamera.Target = PlayerCenter(&MainPlayer)
-			BeginMode2D(MainCamera)
-			MapDraw()
-			PlayerDraw(&MainPlayer)
-			CursorDraw()
-			EndMode2D()
-			PlayerOverlayDraw(&MainPlayer)
+			AccountUpdate(&MainAccount)
+			EventDraw()
+			AccountDraw(&MainAccount)
 		case StateOptions:
-			ShowCursor()
 			OptionsUpdate()
 			OptionsDraw()
 		}

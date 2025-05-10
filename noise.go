@@ -18,7 +18,7 @@ var (
 
 func NoiseInit() {
 	perm := rand.Perm(256)
-	for i := 0; i < 256; i++ {
+	for i := range 256 {
 		p[i] = perm[i]
 		p[i+256] = perm[i]
 	}
