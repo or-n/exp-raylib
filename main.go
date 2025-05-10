@@ -13,6 +13,9 @@ func main() {
 		if err := Save(InputFile, Input); err != nil {
 			fmt.Println("Failed to save input:", err)
 		}
+		if err := Save(AccountFile, &MainAccount); err != nil {
+			fmt.Println("Failed to save account:", err)
+		}
 		CloseWindow()
 	}()
 	WindowSize = MonitorSize()
@@ -23,7 +26,7 @@ func main() {
 	FontInit()
 	MenuInit()
 	EventNew()
-	AccountInit(&MainAccount)
+	AccountInit()
 	SetExitKey(0)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		if IsKeyDown(KeyEscape) {

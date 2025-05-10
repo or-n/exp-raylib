@@ -8,7 +8,7 @@ import (
 )
 
 type Account struct {
-	balance f64
+	Balance f64
 	decided bool
 	input   string
 }
@@ -19,6 +19,7 @@ type Possibility struct {
 }
 
 var (
+	AccountFile = "asset/account.gob"
 	MainAccount Account
 	event       []Possibility
 	n           = i32(1)
@@ -37,8 +38,14 @@ var (
 	}
 )
 
-func AccountInit(account *Account) {
-	account.balance = 1000
+func AccountInit() {
+	if err := Load(AccountFile, &MainAccount); err != nil {
+		fmt.Println("Error loading account:", err)
+		MainAccount.Balance = 1000
+		if err := Save(AccountFile, &MainAccount); err != nil {
+			fmt.Println("Failed to save account:", err)
+		}
+	}
 }
 
 func EventNew() {
@@ -90,16 +97,16 @@ func AccountUpdate(account *Account) {
 	}
 	if IsKeyPressed(KeyEnter) {
 		stake, err := strconv.ParseFloat(account.input, 32)
-		if err == nil && stake <= account.balance {
+		if err == nil && stake <= account.Balance {
 			i := PossibilityId(rand.Float64())
-			account.balance += stake * (event[i].odd - 1)
+			account.Balance += stake * (event[i].odd - 1)
 			EventNew()
 		}
 	}
 }
 
 func AccountDraw(account *Account) {
-	balance := fmt.Sprintf("balance: %.2f", account.balance)
+	balance := fmt.Sprintf("balance: %.2f", account.Balance)
 	DrawText(balance, 200, 500, 20, White)
 	DrawText(account.input, 200, 600, 20, White)
 }
