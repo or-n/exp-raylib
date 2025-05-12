@@ -51,14 +51,27 @@ func MapUpdate() {
 	for y := range MapY {
 		for x := range MapX {
 			if Map[y][x] == Explore {
-				MapExplore(y, x, -1, 0)
-				MapExplore(y, x, 1, 0)
-				MapExplore(y, x, 0, -1)
-				MapExplore(y, x, 0, 1)
+				v := GetRandomValue(0, 3)
+				dy, dx := dir(int(v))
+				MapExplore(y, x, dy, dx)
 				Map[y][x] = Visited
 			}
 		}
 	}
+}
+
+func dir(n int) (int, int) {
+	switch n {
+	case 0:
+		return -1, 0
+	case 1:
+		return 1, 0
+	case 2:
+		return 0, -1
+	case 3:
+		return 0, 1
+	}
+	return 0, 0
 }
 
 func MapExplore(y, x, dy, dx int) bool {
