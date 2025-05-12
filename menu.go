@@ -35,8 +35,6 @@ func MenuDraw() {
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Restart]) {
 		SimulationState = StateGame
-		MainAccount.Balance = 1000
-		MainAccount.decided = false
 	}
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Options]) {
