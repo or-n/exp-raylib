@@ -25,6 +25,8 @@ func main() {
 		case StateMenu:
 			MenuDraw()
 		case StateGame:
+			MapUpdate()
+			MapDraw()
 		case StateOptions:
 			OptionsDraw()
 		}

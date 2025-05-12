@@ -35,6 +35,7 @@ func MenuDraw() {
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Restart]) {
 		SimulationState = StateGame
+		MapRestart()
 	}
 	rect.Y += button.Y
 	if gui.Button(rect, Lang[Options]) {
