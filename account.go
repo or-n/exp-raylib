@@ -48,6 +48,10 @@ func AccountInit() {
 	}
 }
 
+func mix(a, b, t f64) f64 {
+	return a + (b-a)*t
+}
+
 func EventNew() {
 	var sum f64
 	v := make([]f64, n)

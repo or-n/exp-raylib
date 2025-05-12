@@ -10,9 +10,6 @@ func main() {
 	MusicInit()
 	InitWindow(1920, 1080, "Hello")
 	defer func() {
-		if err := Save(InputFile, Input); err != nil {
-			fmt.Println("Failed to save input:", err)
-		}
 		if err := Save(AccountFile, &MainAccount); err != nil {
 			fmt.Println("Failed to save account:", err)
 		}
@@ -21,8 +18,6 @@ func main() {
 	WindowSize = MonitorSize()
 	ToggleFullscreen()
 	SetTargetFPS(600)
-	InputInit()
-	NoiseInit()
 	FontInit()
 	MenuInit()
 	EventNew()
@@ -42,7 +37,6 @@ func main() {
 			EventDraw()
 			AccountDraw(&MainAccount)
 		case StateOptions:
-			OptionsUpdate()
 			OptionsDraw()
 		}
 		position := NewVector2(20, 25)
