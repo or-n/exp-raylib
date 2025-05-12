@@ -90,14 +90,19 @@ func PossibilityId(x f64) i32 {
 }
 
 func AccountUpdate(account *Account) {
+	if account.input == "0" {
+		account.input = ""
+	}
 	for key, char := range keyToChar {
 		if IsKeyPressed(key) {
 			account.input += string(char)
 		}
 	}
-	length := len(account.input)
-	if IsKeyPressed(KeyBackspace) && length > 0 {
-		account.input = account.input[:length-1]
+	if IsKeyPressed(KeyBackspace) {
+		account.input = ""
+	}
+	if account.input == "" {
+		account.input = "0"
 	}
 	if IsKeyPressed(KeyEnter) {
 		stake, err := strconv.ParseFloat(account.input, 32)
@@ -112,5 +117,12 @@ func AccountUpdate(account *Account) {
 func AccountDraw(account *Account) {
 	balance := fmt.Sprintf("balance: %.2f", account.Balance)
 	DrawText(balance, 200, 500, 20, White)
-	DrawText(account.input, 200, 600, 20, White)
+	position := NewVector2(200, 600)
+	padding := NewVector2(20, 20)
+	text := "stake: " + account.input
+	size := MeasureTextEx(GetFontDefault(), text, 20, 2)
+	color := NewColor(0, 0, 0, 127)
+	DrawRectangleV(position, Vector2Add(size, Vector2Scale(padding, 2)), color)
+	text_position := Vector2Add(position, padding)
+	DrawText(text, i32(text_position.X), i32(text_position.Y), 20, White)
 }
