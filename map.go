@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/gen2brain/raylib-go/raylib"
+	"slices"
 )
 
 const (
@@ -43,18 +44,34 @@ func MapUpdate() {
 	}
 	fill := IsMouseButtonDown(MouseButtonLeft)
 	if fill {
-		Map[tile_y][tile_x] = Full
-	}
-	if IsKeyDown(KeyLeftControl) && fill {
-		Map[tile_y][tile_x] = Explore
+		if IsKeyDown(KeyLeftControl) {
+			if Map[tile_y][tile_x] == Empty {
+				Map[tile_y][tile_x] = Explore
+			}
+		} else {
+			Map[tile_y][tile_x] = Full
+		}
 	}
 	for y := range MapY {
 		for x := range MapX {
 			if Map[y][x] == Explore {
-				v := GetRandomValue(0, 3)
-				dy, dx := dir(int(v))
-				MapExplore(y, x, dy, dx)
-				Map[y][x] = Visited
+				var tried []int32
+				for {
+					v := GetRandomValue(0, 3)
+					if slices.Contains(tried, v) {
+						continue
+					}
+					dy, dx := dir(int(v))
+					if MapExplore(y, x, dy, dx) {
+						Map[y][x] = Visited
+						break
+					} else {
+						tried = append(tried, v)
+						if len(tried) == 4 {
+							break
+						}
+					}
+				}
 			}
 		}
 	}
