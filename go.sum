@@ -16,6 +16,8 @@ github.com/gen2brain/raylib-go/raylib v0.0.0-20250504022611-e6017e5fc409 h1:xo23
 github.com/gen2brain/raylib-go/raylib v0.0.0-20250504022611-e6017e5fc409/go.mod h1:BaY76bZk7nw1/kVOSQObPY1v1iwVE1KHAGMfvI6oK1Q=
 github.com/or-n/util-go v0.1.1 h1:KRwCnQNirsZeHaKMZOYhbU71Z0QwPBaFKaTfwzz5ZGw=
 github.com/or-n/util-go v0.1.1/go.mod h1:VP68AxxZ1wuPT41T41rxYvgwcobmHQAY2VCmWjUlf+c=
+github.com/or-n/util-go v0.1.2 h1:t85zaZ+Y/k3EboDKqM78oAzrlYeMRGTYSAuSV/93cfU=
+github.com/or-n/util-go v0.1.2/go.mod h1:VP68AxxZ1wuPT41T41rxYvgwcobmHQAY2VCmWjUlf+c=
 golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 h1:vr/HnozRka3pE4EsMEg1lgkXJkTFJCVUX+S/ZT6wYzM=
 golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842/go.mod h1:XtvwrStGgqGPLc4cjQfWqZHG1YFdYs6swckp8vpsjnc=
 golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f h1:XdNn9LlyWAhLVp6P/i8QYBW+hlyhrhei9uErw2B5GJo=

@@ -73,7 +73,7 @@ func PlayerPositionUpdate(player *Player) {
 		rect := PlayerGetRect(positionUp)
 		if MapCollide(&rect) {
 			player.JumpTo = nil
-			player.Position.Y = Round(player.Position.Y)
+			player.Position.Y = RoundF32(player.Position.Y)
 		} else {
 			player.Position = positionUp
 		}
@@ -83,7 +83,7 @@ func PlayerPositionUpdate(player *Player) {
 		rect := PlayerGetRect(positionWithGravity)
 		if MapCollide(&rect) {
 			player.Grounded = true
-			player.Position.Y = Round(player.Position.Y)
+			player.Position.Y = RoundF32(player.Position.Y)
 		} else {
 			player.Grounded = false
 			player.Position = positionWithGravity
@@ -109,7 +109,7 @@ func PlayerPositionUpdate(player *Player) {
 	if !MapCollide(&rect) {
 		player.Position = positionMove
 	} else {
-		player.Position.X = Round(player.Position.X)
+		player.Position.X = RoundF32(player.Position.X)
 	}
 }
 
