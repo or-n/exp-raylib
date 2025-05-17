@@ -1,6 +1,7 @@
 package main
 
 import (
+	. "exp-raylib/shared"
 	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 	. "github.com/or-n/util-go"
@@ -14,24 +15,29 @@ var (
 	PlayerFile    = "asset/player.gob"
 )
 
-type Player struct {
-	Inventory int
-	Position  Vector2
-	Grounded  bool
-	JumpTo    *float32
+func PlayerGen(player *Player) {
+	player.Position = NewVector2(0, f32(100*texture_y))
+	player.Grounded = false
+	player.JumpTo = nil
+	player.Inventory = 0
+}
+
+func PlayerLoad(filename string, player *Player) {
+	if err := Load(PlayerFile, &MainPlayer); err != nil {
+		fmt.Println("Error loading player:", err)
+		PlayerGen(&MainPlayer)
+		PlayerSave(PlayerFile, &MainPlayer)
+	}
+}
+
+func PlayerSave(filename string, player *Player) {
+	if err := Save(PlayerFile, MainPlayer); err != nil {
+		fmt.Println("Failed to save player:", err)
+	}
 }
 
 func PlayerInit() {
-	if err := Load(PlayerFile, &MainPlayer); err != nil {
-		fmt.Println("Error loading player:", err)
-		MainPlayer.Position = NewVector2(0, f32(100*texture_y))
-		MainPlayer.Grounded = false
-		MainPlayer.JumpTo = nil
-		MainPlayer.Inventory = 0
-		if err := Save(PlayerFile, MainPlayer); err != nil {
-			fmt.Println("Failed to save player:", err)
-		}
-	}
+	PlayerLoad(PlayerFile, &MainPlayer)
 	PlayerSize = NewVector2(16, 32)
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
@@ -114,13 +120,18 @@ func PlayerPositionUpdate(player *Player) {
 }
 
 func PlayerUpdate(player *Player) {
+	if !MapLoaded {
+		return
+	}
 	PlayerPositionUpdate(player)
 	p := CursorPosition()
 	x, y := MapIndex(p)
 	if MapInsideX(x) && MapInsideY(y) {
 		r := MapRect(x, y)
 		if IsMouseButtonDown(MouseButtonLeft) && Map[y][x] != Empty {
-			Map[y][x] = Empty
+			Outgoing <- Message{Type: ClientChangeBlock, Data: ChangeBlockData{
+				X: x, Y: y, Block: Empty,
+			}}
 			player.Inventory += 1
 		}
 		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && player.Inventory > 0 {
@@ -128,7 +139,9 @@ func PlayerUpdate(player *Player) {
 			if CheckCollisionRecs(p, r) {
 				return
 			}
-			Map[y][x] = Dirt
+			Outgoing <- Message{Type: ClientChangeBlock, Data: ChangeBlockData{
+				X: x, Y: y, Block: Dirt,
+			}}
 			player.Inventory -= 1
 		}
 	}

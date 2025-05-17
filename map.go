@@ -1,55 +1,21 @@
 package main
 
 import (
-	"fmt"
+	. "exp-raylib/shared"
 	. "github.com/gen2brain/raylib-go/raylib"
-	. "github.com/or-n/util-go"
-	"math/rand"
-)
-
-const (
-	MaxX    = 10000
-	MaxY    = 256
-	MapFile = "asset/map.gob"
-)
-
-type Block int
-
-const (
-	Empty Block = iota
-	Dirt
 )
 
 var (
+	MapLoaded   bool
 	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
 	texture_x   = i32(16)
 	texture_y   = i32(16)
 	offset_x    = -i32(MaxX) * texture_x / 2
 	offset_y    = i32(0)
-	noise_scale = 0.01
 )
 
 func MapInit() {
-	if err := Load(MapFile, &Map); err != nil {
-		fmt.Println("Error loading map:", err)
-		for y := range MaxY {
-			for x := range MaxX {
-				n := OctaveNoise(f64(x)*noise_scale, 0, 8, 0.5)
-				var block Block
-				if f64(MaxY-1-y) <= f64(MaxY/2)+n*64 {
-					r := rand.Intn(8)
-					if r > 0 {
-						block = Dirt
-					}
-				}
-				Map[y][x] = Block(block)
-			}
-		}
-		if err := Save(MapFile, Map); err != nil {
-			fmt.Println("Failed to save map:", err)
-		}
-	}
 	dirtTexture = LoadTexture("asset/dirt.png")
 }
 

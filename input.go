@@ -72,21 +72,29 @@ var (
 	}
 )
 
-func InputInit() {
-	if err := Load(InputFile, &Input); err != nil {
+func InputGen(Input *map[Action]i32) {
+	*Input = map[Action]i32{
+		ActionNegY:   KeyW,
+		ActionNegX:   KeyA,
+		ActionY:      KeyS,
+		ActionX:      KeyD,
+		ActionJump:   KeyW,
+		ActionSneak:  KeyLeftShift,
+		ActionSprint: KeyLeftControl,
+	}
+}
+
+func InputLoad(filename string, Input *map[Action]i32) {
+	if err := Load(InputFile, Input); err != nil {
 		fmt.Println("Error loading input:", err)
-		Input = map[Action]i32{
-			ActionNegY:   KeyW,
-			ActionNegX:   KeyA,
-			ActionY:      KeyS,
-			ActionX:      KeyD,
-			ActionJump:   KeyW,
-			ActionSneak:  KeyLeftShift,
-			ActionSprint: KeyLeftControl,
-		}
-		if err := Save(InputFile, Input); err != nil {
-			fmt.Println("Failed to save input:", err)
-		}
+		InputGen(Input)
+		InputSave(filename, Input)
+	}
+}
+
+func InputSave(filename string, Input *map[Action]i32) {
+	if err := Save(InputFile, *Input); err != nil {
+		fmt.Println("Failed to save input:", err)
 	}
 }
 

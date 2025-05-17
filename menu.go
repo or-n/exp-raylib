@@ -9,6 +9,7 @@ type State int
 
 const (
 	StateMenu State = iota
+	StateJoining
 	StateGame
 	StateOptions
 	StateExit
