@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
+	. "github.com/or-n/util-go"
 	"math/rand"
 	"strconv"
 )
