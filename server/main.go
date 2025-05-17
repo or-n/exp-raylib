@@ -89,7 +89,7 @@ func main() {
 			log.Println("Map backup saved")
 		}
 	}()
-	ln, err := net.Listen("tcp", ServerAddress())
+	ln, err := net.Listen("tcp", ServerPort)
 	if err != nil {
 		log.Fatal(err)
 	}

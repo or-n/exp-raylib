@@ -15,6 +15,10 @@ const (
 	ServerChangeBlock
 )
 
+const (
+	ServerPort = ":1234"
+)
+
 type Message struct {
 	Type MessageType
 	Data any
@@ -39,5 +43,5 @@ func ServerAddress() string {
 	if ip == "" {
 		ip = "localhost"
 	}
-	return fmt.Sprintf("%s:1234", ip)
+	return fmt.Sprintf("%s%s", ip, ServerPort)
 }
