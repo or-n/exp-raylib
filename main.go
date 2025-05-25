@@ -90,11 +90,6 @@ func main() {
 		r.Height = splitY1 - m*3/2
 		DrawRectangleRec(r, NewColor(0, 0, 0, opacity))
 		DrawTextEx(MainFont, "lista podstawowych komend", p(0), 20, 2, textColor)
-		if CheckCollisionPointRec(cursor, r) {
-			if IsMouseButtonPressed(MouseButtonLeft) {
-				changeSplitY1 = true
-			}
-		}
 		r.X = splitX2 + m/2
 		r.Y = splitY1 + m/2
 		r.Width = (w - splitX2) - m*3/2
