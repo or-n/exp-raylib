@@ -5,10 +5,21 @@ import (
 )
 
 var (
-	Position   []Vector2
+	Position = []Vector2{
+		NewVector2(0.25, 0.75),
+		NewVector2(0.75, 0.75),
+		NewVector2(0.5, 0.25),
+		NewVector2(0.5, 0.75),
+	}
+	Signal = map[int][]int{
+		0: {2},
+		1: {2},
+		2: {3},
+		3: {1},
+	}
 	Active     = make([]bool, 4, 4)
-	Visited    = make([]bool, 4, 4)
-	Signal     = make(map[int][]int)
+	Drag       = make([]bool, 4, 4)
+	Offset     = make([]Vector2, 4, 4)
 	radius     = float32(20)
 	thick      = float32(10)
 	colorOn    = NewColor(255, 127, 127, 255)
@@ -16,45 +27,38 @@ var (
 	lastChange float64
 )
 
-func CircuitInit() {
-	Position = append(Position, NewVector2(0.25, 0.75))
-	Position = append(Position, NewVector2(0.75, 0.75))
-	Position = append(Position, NewVector2(0.5, 0.25))
-	Position = append(Position, NewVector2(0.5, 0.75))
-	Signal[0] = append(Signal[0], 2)
-	Signal[1] = append(Signal[1], 2)
-	Signal[2] = append(Signal[2], 3)
-	lastChange = GetTime()
-}
-
-func activate(from int) {
-	if Visited[from] {
-		return
-	}
-	Visited[from] = true
-	if !Active[from] {
-		return
-	}
-	for _, to := range Signal[from] {
-		Active[to] = true
-		activate(to)
-	}
-}
-
 func CircuitUpdate() {
 	cursor := GetMousePosition()
-	for i, p := range Position {
-		position := ScreenPosition(p)
-		Active[i] = false
-		Visited[i] = false
+	Active2 := make([]bool, len(Position))
+	for i := range Position {
+		if Drag[i] {
+			Position[i] = WorldPosition(Vector2Add(cursor, Offset[i]))
+		}
+		position := ScreenPosition(Position[i])
 		if CheckCollisionPointCircle(cursor, position, radius) {
-			Active[i] = IsMouseButtonDown(MouseButtonLeft)
+			if IsMouseButtonDown(MouseButtonLeft) {
+				Active[i] = true
+				Active2[i] = true
+			}
+			if IsMouseButtonDown(MouseButtonLeft) {
+				Drag[i] = true
+				Offset[i] = Vector2Subtract(position, cursor)
+			}
 		}
 	}
-	if GetTime() > lastChange+1 {
-		for from := range len(Position) {
-			activate(from)
+	if IsMouseButtonReleased(MouseButtonLeft) {
+		Drag = make([]bool, len(Position))
+	}
+	if GetTime() > lastChange+0.1 {
+		for from := range Position {
+			if !Active[from] {
+				continue
+			}
+			for _, to := range Signal[from] {
+				Active2[to] = true
+			}
 		}
+		copy(Active, Active2)
 		lastChange = GetTime()
 	}
 }
