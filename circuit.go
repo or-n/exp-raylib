@@ -31,6 +31,7 @@ var (
 func CircuitUpdate() {
 	cursor := GetMousePosition()
 	Active2 := make([]bool, len(Position))
+	var hit *int
 	for i := range Position {
 		if Drag[i] {
 			Position[i] = WorldPosition(Vector2Add(cursor, Offset[i]))
@@ -42,6 +43,8 @@ func CircuitUpdate() {
 				Active2[i] = true
 			}
 			if IsMouseButtonPressed(MouseButtonLeft) {
+				hit = new(int)
+				*hit = i
 				Drag[i] = true
 				Offset[i] = Vector2Subtract(position, cursor)
 				if choice == nil {
@@ -54,13 +57,6 @@ func CircuitUpdate() {
 					*choice = i
 				}
 			}
-		}
-	}
-	var hit *int
-	for i := range Position {
-		if Active2[i] {
-			hit = new(int)
-			*hit = i
 		}
 	}
 	if hit == nil && IsMouseButtonPressed(MouseButtonLeft) {
