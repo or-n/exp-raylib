@@ -25,6 +25,7 @@ var (
 	colorOn    = NewColor(255, 127, 127, 255)
 	colorOff   = NewColor(255, 0, 0, 255)
 	lastChange float64
+	choice     *int
 )
 
 func CircuitUpdate() {
@@ -40,10 +41,38 @@ func CircuitUpdate() {
 				Active[i] = true
 				Active2[i] = true
 			}
-			if IsMouseButtonDown(MouseButtonLeft) {
+			if IsMouseButtonPressed(MouseButtonLeft) {
 				Drag[i] = true
 				Offset[i] = Vector2Subtract(position, cursor)
+				if choice == nil {
+					choice = new(int)
+					*choice = i
+				} else {
+					if IsKeyDown(KeyLeftControl) {
+						Signal[*choice] = append(Signal[*choice], i)
+					}
+					*choice = i
+				}
 			}
+		}
+	}
+	var hit *int
+	for i := range Position {
+		if Active2[i] {
+			hit = new(int)
+			*hit = i
+		}
+	}
+	if hit == nil && IsMouseButtonPressed(MouseButtonLeft) {
+		if IsKeyDown(KeyLeftControl) {
+			i := len(Position)
+			Position = append(Position, WorldPosition(cursor))
+			Active = append(Active, false)
+			Drag = append(Drag, false)
+			Offset = append(Offset, NewVector2(0, 0))
+			Signal[i] = []int{}
+		} else {
+			choice = nil
 		}
 	}
 	if IsMouseButtonReleased(MouseButtonLeft) {
@@ -63,8 +92,8 @@ func CircuitUpdate() {
 	}
 }
 
-func color(x bool) Color {
-	if x {
+func color(i int) Color {
+	if Active[i] {
 		return colorOn
 	}
 	return colorOff
@@ -75,10 +104,14 @@ func CircuitDraw() {
 		for _, to := range targets {
 			start := ScreenPosition(Position[from])
 			end := ScreenPosition(Position[to])
-			DrawLineEx(start, end, thick, color(Active[from]))
+			DrawLineEx(start, end, thick, color(from))
 		}
 	}
 	for i, p := range Position {
-		DrawCircleV(ScreenPosition(p), radius, color(Active[i]))
+		c := color(i)
+		if choice != nil && i == *choice {
+			c = White
+		}
+		DrawCircleV(ScreenPosition(p), radius, c)
 	}
 }
