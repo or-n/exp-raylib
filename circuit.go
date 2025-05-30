@@ -5,86 +5,150 @@ import (
 )
 
 var (
-	Position = []Vector2{
-		NewVector2(0.25, 0.75),
-		NewVector2(0.75, 0.75),
-		NewVector2(0.5, 0.25),
-		NewVector2(0.5, 0.75),
-	}
-	Signal = map[int][]int{
-		0: {2},
-		1: {2},
-		2: {3},
-		3: {1},
-	}
-	Active     = make([]bool, 4, 4)
-	Drag       = make([]bool, 4, 4)
-	Offset     = make([]Vector2, 4, 4)
+	Position   = make(map[int]Vector2)
+	in         = make(map[int]map[int]struct{})
+	out        = make(map[int]map[int]struct{})
+	Active     = make([]bool, 0)
+	Active2    = make([]bool, 0)
+	Drag       = make(map[int]Vector2)
 	radius     = float32(20)
 	thick      = float32(10)
 	colorOn    = NewColor(255, 127, 127, 255)
 	colorOff   = NewColor(255, 0, 0, 255)
 	lastChange float64
 	choice     *int
+	new_id     = 0
 )
+
+func create_node(position Vector2) {
+	Position[new_id] = WorldPosition(Clip(ScreenPosition(position)))
+	Active = append(Active, false)
+	Active2 = append(Active2, false)
+	new_id += 1
+}
+
+func create_edge(from, to int) {
+	if out[from] == nil {
+		out[from] = make(map[int]struct{})
+	}
+	out[from][to] = struct{}{}
+	if in[to] == nil {
+		in[to] = make(map[int]struct{})
+	}
+	in[to][from] = struct{}{}
+}
+
+func delete_edge(from, to int) {
+	if tos, ok := out[from]; ok {
+		delete(tos, to)
+		if len(tos) == 0 {
+			delete(out, from)
+		}
+	}
+	if froms, ok := in[to]; ok {
+		delete(froms, from)
+		if len(froms) == 0 {
+			delete(in, to)
+		}
+	}
+}
+
+func delete_node(i int) {
+	if tos, ok := out[i]; ok {
+		for to := range tos {
+			delete_edge(i, to)
+		}
+	}
+	if froms, ok := in[i]; ok {
+		for from := range froms {
+			delete_edge(from, i)
+		}
+	}
+	delete(Position, i)
+	delete(Drag, i)
+	Active[i] = false
+	Active2[i] = false
+	if choice != nil && *choice == i {
+		choice = nil
+	}
+}
+
+func CircuitInit() {
+	positions := []Vector2{
+		NewVector2(0.25, 0.75),
+		NewVector2(0.75, 0.75),
+		NewVector2(0.5, 0.25),
+		NewVector2(0.5, 0.75),
+	}
+	for _, p := range positions {
+		create_node(p)
+	}
+	create_edge(0, 2)
+	create_edge(1, 2)
+	create_edge(2, 3)
+	create_edge(3, 1)
+}
 
 func CircuitUpdate() {
 	cursor := GetMousePosition()
-	Active2 := make([]bool, len(Position))
-	var hit *int
+	var hit_exists bool
 	for i := range Position {
-		if Drag[i] {
-			Position[i] = WorldPosition(Vector2Add(cursor, Offset[i]))
+		if offset, exists := Drag[i]; exists {
+			Position[i] = WorldPosition(Clip(Vector2Add(cursor, offset)))
 		}
 		position := ScreenPosition(Position[i])
 		if CheckCollisionPointCircle(cursor, position, radius) {
+			if IsMouseButtonPressed(MouseButtonRight) {
+				delete_node(i)
+				continue
+			}
 			if IsMouseButtonDown(MouseButtonLeft) {
 				Active[i] = true
 				Active2[i] = true
 			}
 			if IsMouseButtonPressed(MouseButtonLeft) {
-				hit = new(int)
-				*hit = i
-				Drag[i] = true
-				Offset[i] = Vector2Subtract(position, cursor)
+				hit_exists = true
+				Drag[i] = Vector2Subtract(position, cursor)
 				if choice == nil {
 					choice = new(int)
 					*choice = i
 				} else {
 					if IsKeyDown(KeyLeftControl) {
-						Signal[*choice] = append(Signal[*choice], i)
+						create_edge(*choice, i)
 					}
 					*choice = i
 				}
 			}
 		}
 	}
-	if hit == nil && IsMouseButtonPressed(MouseButtonLeft) {
+	if !hit_exists && IsMouseButtonPressed(MouseButtonLeft) {
 		if IsKeyDown(KeyLeftControl) {
-			i := len(Position)
-			Position = append(Position, WorldPosition(cursor))
-			Active = append(Active, false)
-			Drag = append(Drag, false)
-			Offset = append(Offset, NewVector2(0, 0))
-			Signal[i] = []int{}
+			create_node(WorldPosition(cursor))
 		} else {
 			choice = nil
 		}
 	}
 	if IsMouseButtonReleased(MouseButtonLeft) {
-		Drag = make([]bool, len(Position))
+		for k := range Drag {
+			delete(Drag, k)
+		}
 	}
 	if GetTime() > lastChange+0.1 {
-		for from := range Position {
-			if !Active[from] {
+		lastChange = GetTime()
+		for from, active := range Active {
+			if !active {
 				continue
 			}
-			for _, to := range Signal[from] {
-				Active2[to] = true
+			if tos, ok := out[from]; ok {
+				for to := range tos {
+					Active2[to] = true
+				}
 			}
 		}
-		copy(Active, Active2)
-		lastChange = GetTime()
+		Active, Active2 = Active2, Active
+		for i := range Active2 {
+			Active2[i] = false
+		}
 	}
 }
 
@@ -96,8 +160,8 @@ func color(i int) Color {
 }
 
 func CircuitDraw() {
-	for from, targets := range Signal {
-		for _, to := range targets {
+	for from, tos := range out {
+		for to := range tos {
 			start := ScreenPosition(Position[from])
 			end := ScreenPosition(Position[to])
 			DrawLineEx(start, end, thick, color(from))

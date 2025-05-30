@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/gen2brain/raylib-go/raylib"
+	"math"
 )
 
 var (
@@ -21,6 +22,14 @@ func WorldPosition(p Vector2) Vector2 {
 	return Vector2Divide(p, ScreenSize)
 }
 
+func Clip(p Vector2) Vector2 {
+	gridStep := float32(120)
+	return NewVector2(
+		float32(math.Round(float64(p.X/gridStep)))*gridStep,
+		float32(math.Round(float64(p.Y/gridStep)))*gridStep,
+	)
+}
+
 func main() {
 	InitWindow(int32(ScreenSize.X), int32(ScreenSize.Y), "")
 	defer CloseWindow()
@@ -28,6 +37,7 @@ func main() {
 	ToggleFullscreen()
 	MainFont := LoadFontEx(fontFile, 20, codepoints, int32(len(codepoints)))
 	Bg := LoadTexture("asset/bg.jpg")
+	CircuitInit()
 	for !WindowShouldClose() {
 		CircuitUpdate()
 		BeginDrawing()
