@@ -11,10 +11,10 @@ var (
 	Active     = make([]bool, 0)
 	Active2    = make([]bool, 0)
 	Drag       = make(map[int]Vector2)
-	radius     = float32(20)
+	radius     = float32(5)
 	thick      = float32(10)
-	colorOn    = NewColor(255, 127, 127, 255)
-	colorOff   = NewColor(255, 0, 0, 255)
+	colorOn    = NewColor(255, 0, 0, 255)
+	colorOff   = NewColor(127, 0, 0, 255)
 	lastChange float64
 	choice     *int
 	new_id     = 0
@@ -160,6 +160,13 @@ func color(i int) Color {
 }
 
 func CircuitDraw() {
+	for i, p := range Position {
+		c := color(i)
+		if Active[i] {
+			continue
+		}
+		DrawCircleV(ScreenPosition(p), radius, c)
+	}
 	for from, tos := range out {
 		for to := range tos {
 			start := ScreenPosition(Position[from])
@@ -171,6 +178,8 @@ func CircuitDraw() {
 		c := color(i)
 		if choice != nil && i == *choice {
 			c = White
+		} else if !Active[i] {
+			continue
 		}
 		DrawCircleV(ScreenPosition(p), radius, c)
 	}
