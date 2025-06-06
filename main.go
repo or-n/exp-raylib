@@ -10,7 +10,7 @@ func main() {
 	InitAudioDevice()
 	Music := LoadMusicStream("asset/TetrisThemeDubstep.ogg")
 	PlayMusicStream(Music)
-	InitWindow(1920, 1080, "Hello")
+	InitWindow(1920, 1080, "Staker")
 	defer func() {
 		if err := Save(AccountFile, &MainAccount); err != nil {
 			fmt.Println("Failed to save account:", err)
@@ -19,11 +19,12 @@ func main() {
 	}()
 	WindowSize = MonitorSize()
 	ToggleFullscreen()
-	SetTargetFPS(600)
+	SetTargetFPS(100)
 	FontInit()
 	MenuInit()
 	EventNew()
 	AccountInit()
+	GifInit()
 	SetExitKey(0)
 	for !WindowShouldClose() && SimulationState != StateExit {
 		SetMusicVolume(Music, MusicVolume)
@@ -37,17 +38,16 @@ func main() {
 		case StateMenu:
 			MenuDraw()
 		case StateGame:
+			GifUpdate()
 			AccountUpdate(&MainAccount)
+			if Gif {
+				DrawTexture(GifTexture, 0, 0, White)
+			}
 			EventDraw()
 			AccountDraw(&MainAccount)
 		case StateOptions:
 			OptionsDraw()
 		}
-		position := NewVector2(20, 25)
-		size := NewVector2(100, 30)
-		color := NewColor(0, 0, 0, 127)
-		DrawRectangleV(position, size, color)
-		DrawFPS(30, 30)
 		EndDrawing()
 	}
 }

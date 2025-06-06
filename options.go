@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	MusicVolume f32
+	MusicVolume = f32(0.5)
 )
 
 func OptionsDraw() {
