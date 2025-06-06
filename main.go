@@ -8,7 +8,8 @@ import (
 
 func main() {
 	InitAudioDevice()
-	MusicInit()
+	Music := LoadMusicStream("asset/TetrisThemeDubstep.ogg")
+	PlayMusicStream(Music)
 	InitWindow(1920, 1080, "Hello")
 	defer func() {
 		if err := Save(AccountFile, &MainAccount); err != nil {
@@ -25,6 +26,8 @@ func main() {
 	AccountInit()
 	SetExitKey(0)
 	for !WindowShouldClose() && SimulationState != StateExit {
+		SetMusicVolume(Music, MusicVolume)
+		UpdateMusicStream(Music)
 		if IsKeyDown(KeyEscape) {
 			SimulationState = StateMenu
 		}
@@ -46,6 +49,5 @@ func main() {
 		DrawRectangleV(position, size, color)
 		DrawFPS(30, 30)
 		EndDrawing()
-		MusicUpdate()
 	}
 }
