@@ -20,7 +20,7 @@ var (
 )
 
 func MenuInit() {
-	SimulationState = StateMenu
+	SimulationState = StateGame
 	gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
 	gui.SetFont(MainFont)
 }
@@ -29,7 +29,7 @@ func MenuDraw() {
 	x := (WindowSize.X - button.X) * 0.5
 	y := (WindowSize.Y - button.Y*4) * 0.5
 	rect := NewRectangle(x, y, button.X, button.Y)
-	if gui.Button(rect, Lang[Start]) {
+	if gui.Button(rect, Lang[Play]) {
 		SimulationState = StateGame
 	}
 	rect.Y += button.Y

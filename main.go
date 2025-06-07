@@ -40,9 +40,7 @@ func main() {
 		case StateGame:
 			GifUpdate()
 			AccountUpdate(&MainAccount)
-			if Gif {
-				DrawTexture(GifTexture, 0, 0, White)
-			}
+			GifDraw()
 			EventDraw()
 			AccountDraw(&MainAccount)
 		case StateOptions:

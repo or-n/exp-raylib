@@ -23,7 +23,7 @@ var (
 	AccountFile = "asset/account.gob"
 	MainAccount Account
 	event       []Possibility
-	n           = i32(1)
+	n           = i32(2)
 	keyToChar   = map[int32]rune{
 		KeyZero:   '0',
 		KeyOne:    '1',
@@ -60,23 +60,40 @@ func EventNew() {
 		v[i] = rand.Float64()
 		sum += v[i]
 	}
+	all := rand.Float64()
+	sum /= all
 	event = make([]Possibility, n+1)
 	margin := mix(0.7, 1.1, rand.Float64())
 	for i := range n {
-		p := v[i]
+		p := v[i] / sum
 		event[i] = Possibility{chance: p, odd: margin / p}
 	}
-	event[n] = Possibility{chance: 1 - event[0].chance, odd: 0}
+	event[n] = Possibility{chance: 1 - all, odd: 0}
 	MainAccount.decided = false
 }
 
 func EventDraw() {
-	for i := range n {
-		chance := fmt.Sprintf("chance: %.2f", event[i].chance)
-		odd := fmt.Sprintf("odd: %.2f", event[i].odd)
-		DrawText(chance, 200, 50*(i+1), 20, White)
-		DrawText(odd, 400, 50*(i+1), 20, White)
+	line_x := i32(90)
+	line_y := i32(40)
+	col_x := line_x + 10*3
+	w := 2*line_x + 10*5
+	x := (i32(WindowSize.X) - w) / 2
+	y := i32(100)
+	DrawRectangle(x, y, line_x+10*2, (n+2)*line_y+10*3-5, LightGray)
+	DrawText(Lang[Chance], x+10, y+10, 20, Black)
+	DrawRectangle(x+col_x, y, line_x+10*2, (n+2)*line_y+10*3-5, LightGray)
+	DrawText(Lang[Odd], x+10+col_x, y+10, 20, Black)
+	y += line_y + 10*2
+	for i := range n + 1 {
+		DrawRectangle(x+10, y, line_x, line_y-5, SkyBlue)
+		chance := fmt.Sprintf("%.2f", event[i].chance)
+		DrawText(chance, x+20, y+5, 20, Black)
+		DrawRectangle(x+10+col_x, y, line_x, line_y-5, SkyBlue)
+		odd := fmt.Sprintf("%.2f", event[i].odd)
+		DrawText(odd, x+20+col_x, y+5, 20, Black)
+		y += line_y
 	}
+
 }
 
 func PossibilityId(x f64) i32 {
@@ -116,14 +133,17 @@ func AccountUpdate(account *Account) {
 }
 
 func AccountDraw(account *Account) {
-	balance := fmt.Sprintf("balance: %.2f", account.Balance)
-	DrawText(balance, 200, 500, 20, White)
-	position := NewVector2(200, 600)
+	balance := fmt.Sprintf("%s: %.2f", Lang[Balance], account.Balance)
+	s := MeasureTextEx(GetFontDefault(), balance, 20, 2)
+	p := Vector2Scale(Vector2Subtract(WindowSize, s), 0.5)
+	DrawText(balance, i32(p.X), i32(p.Y)+200, 20, White)
 	padding := NewVector2(20, 20)
-	text := "stake: " + account.input
+	text := Lang[Stake] + ": " + account.input
 	size := MeasureTextEx(GetFontDefault(), text, 20, 2)
 	color := NewColor(0, 0, 0, 127)
-	DrawRectangleV(position, Vector2Add(size, Vector2Scale(padding, 2)), color)
+	size_with_padding := Vector2Add(size, Vector2Scale(padding, 2))
+	position := Vector2Scale(Vector2Subtract(WindowSize, size_with_padding), 0.5)
+	DrawRectangleV(position, size_with_padding, color)
 	text_position := Vector2Add(position, padding)
 	DrawText(text, i32(text_position.X), i32(text_position.Y), 20, White)
 }

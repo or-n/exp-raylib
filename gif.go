@@ -11,19 +11,16 @@ var (
 	frame      i32
 	gif        *Image
 	GifTexture Texture2D
-	frameSize  int
-	width      int
-	height     int
+	frameSize  i32
 	timer      f32
 	frameTimer f32
 	Gif        bool
+	GifX, GifY i32
 )
 
 func GifInit() {
 	gif = LoadImageAnim("asset/smell-money.gif", &frames)
-	width = int(gif.Width)
-	height = int(gif.Height)
-	frameSize = int(gif.Width) * int(gif.Height) * 4
+	frameSize = gif.Width * gif.Height * 4
 	GifTexture = LoadTextureFromImage(gif)
 }
 
@@ -34,15 +31,17 @@ func GifUpdate() {
 			timer = 0
 			if GetRandomValue(0, 599) == 0 {
 				Gif = true
+				GifX = (int32(WindowSize.X) - gif.Width) / 2
+				GifY = (int32(WindowSize.Y) - gif.Height) / 2
 			}
 		}
 		return
 	}
 	frameTimer += GetFrameTime()
-	data := unsafe.Slice((*byte)(gif.Data), int(frames)*frameSize)
-	offset := int(frame) * frameSize
+	data := unsafe.Slice((*byte)(gif.Data), frames*frameSize)
+	offset := frame * frameSize
 	frameBytes := data[offset : offset+frameSize]
-	colors := unsafe.Slice((*color.RGBA)(unsafe.Pointer(&frameBytes[0])), width*height)
+	colors := unsafe.Slice((*color.RGBA)(unsafe.Pointer(&frameBytes[0])), gif.Width*gif.Height)
 	UpdateTexture(GifTexture, colors)
 	if frameTimer >= 0.1 {
 		frameTimer = 0
@@ -52,4 +51,11 @@ func GifUpdate() {
 			Gif = false
 		}
 	}
+}
+
+func GifDraw() {
+	if !Gif {
+		return
+	}
+	DrawTexture(GifTexture, GifX, GifY, White)
 }
