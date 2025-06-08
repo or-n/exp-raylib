@@ -23,7 +23,7 @@ var (
 	AccountFile = "asset/account.gob"
 	MainAccount Account
 	event       []Possibility
-	n           = i32(2)
+	n           = i32(5)
 	keyToChar   = map[int32]rune{
 		KeyZero:   '0',
 		KeyOne:    '1',
@@ -37,6 +37,7 @@ var (
 		KeyNine:   '9',
 		KeyPeriod: '.',
 	}
+	ShowOdd0 = false
 )
 
 func AccountInit() {
@@ -57,18 +58,19 @@ func EventNew() {
 	var sum f64
 	v := make([]f64, n)
 	for i := range n {
-		v[i] = rand.Float64()
+		v[i] = mix(0.1, 1, rand.Float64())
 		sum += v[i]
 	}
-	all := rand.Float64()
-	sum /= all
+	chance0 := rand.Float64()
+	sum /= 1 - chance0
 	event = make([]Possibility, n+1)
 	margin := mix(0.7, 1.1, rand.Float64())
+	x := margin / f64(n)
 	for i := range n {
 		p := v[i] / sum
-		event[i] = Possibility{chance: p, odd: margin / p}
+		event[i] = Possibility{chance: p, odd: x / p}
 	}
-	event[n] = Possibility{chance: 1 - all, odd: 0}
+	event[n] = Possibility{chance: chance0, odd: 0}
 	MainAccount.decided = false
 }
 
@@ -79,12 +81,16 @@ func EventDraw() {
 	w := 2*line_x + 10*5
 	x := (i32(WindowSize.X) - w) / 2
 	y := i32(100)
-	DrawRectangle(x, y, line_x+10*2, (n+2)*line_y+10*3-5, LightGray)
+	count := n + 1
+	if !ShowOdd0 {
+		count -= 1
+	}
+	DrawRectangle(x, y, line_x+10*2, (count+1)*line_y+10*3-5, LightGray)
 	DrawText(Lang[Chance], x+10, y+10, 20, Black)
-	DrawRectangle(x+col_x, y, line_x+10*2, (n+2)*line_y+10*3-5, LightGray)
+	DrawRectangle(x+col_x, y, line_x+10*2, (count+1)*line_y+10*3-5, LightGray)
 	DrawText(Lang[Odd], x+10+col_x, y+10, 20, Black)
 	y += line_y + 10*2
-	for i := range n + 1 {
+	for i := range count {
 		DrawRectangle(x+10, y, line_x, line_y-5, SkyBlue)
 		chance := fmt.Sprintf("%.2f", event[i].chance)
 		DrawText(chance, x+20, y+5, 20, Black)
@@ -93,7 +99,6 @@ func EventDraw() {
 		DrawText(odd, x+20+col_x, y+5, 20, Black)
 		y += line_y
 	}
-
 }
 
 func PossibilityId(x f64) i32 {

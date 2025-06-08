@@ -35,7 +35,7 @@ var (
 		Chance:  "szansa",
 		Odd:     "kurs",
 		Stake:   "stawka",
-		Balance: "Bilans",
+		Balance: "bilans",
 	}
 	Lang = PL
 )
