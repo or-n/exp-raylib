@@ -59,7 +59,7 @@ func KeyString(x i32) string {
 }
 
 var (
-	InputFile = "asset/input.gob"
+	InputFile = "data/input.gob"
 	Input     map[Action]i32
 	keys      = []i32{
 		KeyW,

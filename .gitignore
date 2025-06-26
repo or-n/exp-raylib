@@ -1,1 +1,5 @@
-__pycache__/
+data/
+server/data/
+Raylib-Go-Wasm/
+/server
+!/server/

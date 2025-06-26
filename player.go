@@ -12,7 +12,7 @@ var (
 	PlayerSize    Vector2
 	PlayerTexture Texture2D
 	MainPlayer    Player
-	PlayerFile    = "asset/player.gob"
+	PlayerFile    = "data/player.gob"
 )
 
 func PlayerGen(player *Player) {
