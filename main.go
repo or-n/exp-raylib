@@ -11,6 +11,10 @@ var (
 	windowSize Vector2
 	length     = float32(16)
 	update     = func() {
+		vw, vh := viewportSize()
+		SetWindowSize(vw, vh)
+		windowSize = NewVector2(float32(vw), float32(vh))
+		attach = NewVector2(windowSize.X*0.5, 0)
 		gravity()
 		cursor := GetMousePosition()
 		for range 500 {
@@ -18,15 +22,13 @@ var (
 			backward(attach)
 		}
 		BeginDrawing()
-		ClearBackground(Blank)
+		ClearBackground(Black)
 		draw_points()
 		EndDrawing()
 	}
 )
 
-func init() {
-	windowSize = NewVector2(1920, 1080)
-	attach = NewVector2(windowSize.X*0.5, 0)
+func init_points() {
 	points[0] = attach
 	for i := range points[1:] {
 		points[i+1] = points[i]
@@ -71,10 +73,11 @@ func gravity() {
 }
 
 func main() {
-	InitWindow(1920, 1080, "")
+	InitWindow(0, 0, "")
 	defer CloseWindow()
-	ToggleFullscreen()
+	init_points()
 	SetTargetFPS(600)
+	SetMainLoop(update)
 	for !WindowShouldClose() {
 		update()
 	}
