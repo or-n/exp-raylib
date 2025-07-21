@@ -35,7 +35,7 @@ func ConnJoin() {
 	SimulationState = StateJoining
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	url := "ws://" + Ip + PortWs + "/ws"
+	url := "wss://" + Ip + PortWs + "/ws"
 	log.Println("Dialing WebSocket:", url)
 	conn, _, err := websocket.Dial(ctx, url, nil)
 	// 	conn, err := net.Dial("tcp", Ip+PortTCP)
