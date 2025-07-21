@@ -1,9 +1,10 @@
 package main
 
 import (
-	. "exp-raylib/shared"
+	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 	. "github.com/or-n/util-go"
+	. "shared"
 )
 
 var (
@@ -17,33 +18,27 @@ var (
 		case StateMenu:
 			ShowCursor()
 			MenuDraw()
+		case StateJoining:
+			text := fmt.Sprintf("Joining %s", Ip)
+			DrawText(text, 400, 400, 20, White)
+		case StateJoinError:
+			text := fmt.Sprintf("Couldn't join %s", Ip)
+			DrawText(text, 400, 400, 20, White)
 		case StateGame:
-			if Joined {
-				HideCursor()
-				CameraUpdate()
-				PlayerUpdate(&MainPlayer)
-				MainCamera.Target = PlayerCenter(&MainPlayer)
-				BeginMode2D(MainCamera)
-				MapDraw()
-				PlayerDraw(&MainPlayer)
-				CursorDraw()
-				EndMode2D()
-				PlayerOverlayDraw(&MainPlayer)
-			} else {
-				ConnJoin()
-				ShowCursor()
-				DrawText("Joining", 400, 400, 20, White)
-			}
+			CameraUpdate()
+			PlayerUpdate(&MainPlayer)
+			MainCamera.Target = PlayerCenter(&MainPlayer)
+			BeginMode2D(MainCamera)
+			MapDraw()
+			PlayerDraw(&MainPlayer)
+			EndMode2D()
+			PlayerOverlayDraw(&MainPlayer)
 		case StateOptions:
 			ShowCursor()
 			OptionsUpdate()
 			OptionsDraw()
 		}
-		position := NewVector2(20, 25)
-		size := NewVector2(100, 30)
-		color := NewColor(0, 0, 0, 127)
-		DrawRectangleV(position, size, color)
-		DrawFPS(30, 30)
+		DrawFPSTopLeft()
 		EndDrawing()
 		if SimulationState == StateExit {
 			CloseWindow()
@@ -51,10 +46,18 @@ var (
 	}
 )
 
+func DrawFPSTopLeft() {
+	position := NewVector2(20, 25)
+	size := NewVector2(100, 30)
+	color := NewColor(0, 0, 0, 127)
+	DrawRectangleV(position, size, color)
+	DrawFPS(30, 30)
+}
+
 func main() {
 	MessageRegister()
 	InitAudioDevice()
-	InitWindow(1920, 1080, "Hello")
+	InitWindow(1920, 999, "multiplayer")
 	defer func() {
 		PlayerSave(PlayerFile, &MainPlayer)
 		InputSave(InputFile, &Input)
@@ -71,8 +74,10 @@ func main() {
 	CursorInit()
 	FontInit()
 	MenuInit()
+	Ip = Remote()
+	ConnJoin()
 	SetExitKey(0)
-	// SetMainLoop(update)
+	SetMainLoop(update)
 	for !WindowShouldClose() {
 		update()
 	}

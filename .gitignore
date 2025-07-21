@@ -1,4 +1,4 @@
-data/
-serve/data/
-Raylib-Go-Wasm/
-server
+server/data/
+client/data/
+client/Raylib-Go-Wasm/
+client/server

@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "exp-raylib/shared"
 	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 	. "github.com/or-n/util-go"
+	. "shared"
 	"strconv"
 )
 
@@ -38,7 +38,7 @@ func PlayerSave(filename string, player *Player) {
 
 func PlayerInit() {
 	PlayerLoad(PlayerFile, &MainPlayer)
-	PlayerSize = NewVector2(16, 32)
+	PlayerSize = NewVector2(8, 12)
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 

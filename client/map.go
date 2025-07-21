@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "exp-raylib/shared"
 	. "github.com/gen2brain/raylib-go/raylib"
+	. "shared"
 )
 
 var (
@@ -62,7 +62,8 @@ func MapDraw() {
 	rect.Height = f32(texture_y)
 	center := RectCenter(cameraRect)
 	cx, cy := MapIndex(center)
-	n := 61
+	// n := 61
+	n := 16
 	for y := range n {
 		iy := y - n/2 + cy
 		if !MapInsideY(iy) {

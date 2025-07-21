@@ -1,0 +1,6 @@
+github.com/BrownNPC/wasm-ffi-go v1.1.0 h1:oashfuQflpB+qx/xI71Gvim3YN/0iIny5TMIpzEFz0Y=
+github.com/BrownNPC/wasm-ffi-go v1.1.0/go.mod h1:D5+RBMb672fgw6vPz4HOWYxpyrmPrIao8VqlXihOFFg=
+github.com/coder/websocket v1.8.13 h1:f3QZdXy7uGVz+4uCJy2nTZyM0yTBj8yANEHhqlXZ9FE=
+github.com/coder/websocket v1.8.13/go.mod h1:LNVeNrXQZfe5qhS9ALED3uA+l5pPqvwXg3CKoDBB2gs=
+github.com/or-n/util-go v0.1.3 h1:u5o7oqHfmta4rehcx4e8zNzMK02jJ1DUGiK2F0GPb2A=
+github.com/or-n/util-go v0.1.3/go.mod h1:VP68AxxZ1wuPT41T41rxYvgwcobmHQAY2VCmWjUlf+c=

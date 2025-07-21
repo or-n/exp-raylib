@@ -10,6 +10,7 @@ type State int
 const (
 	StateMenu State = iota
 	StateJoining
+	StateJoinError
 	StateGame
 	StateOptions
 	StateExit
@@ -21,7 +22,7 @@ var (
 )
 
 func MenuInit() {
-	SimulationState = StateGame
+	SimulationState = StateJoining
 	// gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, 30)
 	// gui.SetFont(MainFont)
 }

@@ -1,27 +1,53 @@
 package main
 
 import (
-	. "exp-raylib/shared"
+	"context"
+	"github.com/coder/websocket"
 	. "github.com/or-n/util-go"
 	"log"
 	"net"
+	. "shared"
+	"syscall/js"
+	"time"
 )
 
 var (
-	Joined   bool
 	MainConn net.Conn
 	Incoming = make(chan Message, 32)
 	Outgoing = make(chan Message, 32)
+	Ip       string
 )
 
-func ConnJoin() {
-	conn, err := net.Dial("tcp", ServerAddress())
-	MainConn = conn
-	if err != nil {
-		SimulationState = StateMenu
+const (
+	local = "localhost"
+)
+
+func Remote() string {
+	// 	os.Getenv("SERVER_IP")
+	ip := js.Global().Get("SERVER_IP")
+	if !ip.Truthy() {
+		return local
 	}
+	return ip.String()
+}
+
+func ConnJoin() {
+	SimulationState = StateJoining
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	url := "ws://" + Ip + PortWs + "/ws"
+	log.Println("Dialing WebSocket:", url)
+	conn, _, err := websocket.Dial(ctx, url, nil)
+	// 	conn, err := net.Dial("tcp", Ip+PortTCP)
+	if err != nil {
+		log.Println("WebSocket join error:", err)
+		SimulationState = StateJoinError
+		return
+	}
+	log.Printf("connected")
+	MainConn = websocket.NetConn(context.Background(), conn, websocket.MessageBinary)
+	SimulationState = StateGame
 	Outgoing <- Message{Type: ClientGreet, Data: nil}
-	Joined = true
 	go ConnReceive()
 	go ConnSend()
 }

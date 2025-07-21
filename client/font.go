@@ -14,5 +14,6 @@ var (
 )
 
 func FontInit() {
-	MainFont = LoadFontEx(fontFile, 32, codepoints, i32(len(codepoints)))
+	MainFont = GetFontDefault()
+	// MainFont = LoadFontEx(fontFile, 32, codepoints, i32(len(codepoints)))
 }

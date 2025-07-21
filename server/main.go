@@ -1,11 +1,14 @@
 package main
 
 import (
-	. "exp-raylib/shared"
+	"context"
+	"github.com/coder/websocket"
 	. "github.com/or-n/util-go"
 	"io"
 	"log"
 	"net"
+	"net/http"
+	. "shared"
 	"strings"
 	"sync"
 	"time"
@@ -19,10 +22,12 @@ var (
 )
 
 func handleConn(conn net.Conn) {
+	log.Println("handling conn")
 	defer func() {
 		mu.Lock()
 		delete(ActivePlayers, conn)
 		mu.Unlock()
+		log.Println("closing conn")
 		conn.Close()
 	}()
 	player := &Player{}
@@ -32,7 +37,8 @@ func handleConn(conn net.Conn) {
 	for {
 		var msg Message
 		if err := FromSeq(conn, &msg); err != nil {
-			if err == io.EOF || strings.Contains(err.Error(), "connection reset by peer") {
+			reset := strings.Contains(err.Error(), "connection reset by peer")
+			if err == io.EOF || reset {
 				log.Println("Client disconnected")
 				return
 			}
@@ -67,6 +73,22 @@ func handleConn(conn net.Conn) {
 	}
 }
 
+func handleWS(w http.ResponseWriter, r *http.Request) {
+	log.Println("Ws connection try")
+	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
+		InsecureSkipVerify: true,
+	})
+	if err != nil {
+		log.Println("WebSocket accept error:", err)
+		return
+	}
+	log.Println("WebSocket client connected")
+	go func() {
+		conn := websocket.NetConn(context.Background(), c, websocket.MessageBinary)
+		handleConn(conn)
+	}()
+}
+
 func Broadcast(msg Message) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -89,18 +111,26 @@ func main() {
 			log.Println("Map backup saved")
 		}
 	}()
-	ln, err := net.Listen("tcp", ServerPort)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer ln.Close()
-	log.Println("Server is listening on port 1234")
-	for {
-		conn, err := ln.Accept()
+	go func() {
+		ln, err := net.Listen("tcp", PortTCP)
 		if err != nil {
-			log.Println("Accept error:", err)
-			continue
+			log.Fatal(err)
 		}
-		go handleConn(conn)
+		defer ln.Close()
+		log.Println("TCP server listening on", PortTCP)
+		for {
+			conn, err := ln.Accept()
+			if err != nil {
+				log.Println("Accept error:", err)
+				continue
+			}
+			go handleConn(conn)
+		}
+	}()
+	log.Println("Ws server is listening on", PortWs)
+	http.HandleFunc("/ws", handleWS)
+	err := http.ListenAndServe(PortWs, nil)
+	if err != nil {
+		log.Fatal("HTTP server error:", err)
 	}
 }
