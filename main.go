@@ -6,32 +6,11 @@ import (
 	. "github.com/or-n/util-go"
 )
 
-func main() {
-	MessageRegister()
-	InitAudioDevice()
-	MusicInit()
-	InitWindow(1920, 1080, "Hello")
-	defer func() {
-		PlayerSave(PlayerFile, &MainPlayer)
-		InputSave(InputFile, &Input)
-		CloseWindow()
-	}()
-	WindowSize = MonitorSize()
-	ToggleFullscreen()
-	SetTargetFPS(600)
-	InputLoad(InputFile, &Input)
-	PlayerInit()
-	NoiseInit()
-	MapInit()
-	CameraInit()
-	CursorInit()
-	FontInit()
-	MenuInit()
-	SetExitKey(0)
-	for !WindowShouldClose() && SimulationState != StateExit {
-		if IsKeyDown(KeyEscape) {
-			SimulationState = StateMenu
-		}
+var (
+	update = func() {
+		// if IsKeyDown(KeyEscape) {
+		// 	SimulationState = StateMenu
+		// }
 		BeginDrawing()
 		ClearBackground(WindowBg)
 		switch SimulationState {
@@ -66,6 +45,35 @@ func main() {
 		DrawRectangleV(position, size, color)
 		DrawFPS(30, 30)
 		EndDrawing()
-		MusicUpdate()
+		if SimulationState == StateExit {
+			CloseWindow()
+		}
+	}
+)
+
+func main() {
+	MessageRegister()
+	InitAudioDevice()
+	InitWindow(1920, 1080, "Hello")
+	defer func() {
+		PlayerSave(PlayerFile, &MainPlayer)
+		InputSave(InputFile, &Input)
+		CloseWindow()
+	}()
+	WindowSize = MonitorSize()
+	ToggleFullscreen()
+	SetTargetFPS(600)
+	InputLoad(InputFile, &Input)
+	PlayerInit()
+	NoiseInit()
+	MapInit()
+	CameraInit()
+	CursorInit()
+	FontInit()
+	MenuInit()
+	SetExitKey(0)
+	// SetMainLoop(update)
+	for !WindowShouldClose() {
+		update()
 	}
 }

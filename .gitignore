@@ -1,5 +1,4 @@
 data/
-server/data/
+serve/data/
 Raylib-Go-Wasm/
-/server
-!/server/
+server

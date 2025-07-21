@@ -1,7 +1,7 @@
 package main
 
 import (
-	gui "github.com/gen2brain/raylib-go/raygui"
+	// gui "github.com/gen2brain/raylib-go/raygui"
 	. "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -72,6 +72,6 @@ func InputOptionsDraw() {
 }
 
 func MusicOptionsDraw() {
-	rect := NewRectangle(WindowSize.X*0.5, 200, 400, 50)
-	MusicVolume = gui.Slider(rect, Lang[Volume], "", MusicVolume, 0, 1)
+	// rect := NewRectangle(WindowSize.X*0.5, 200, 400, 50)
+	// MusicVolume = gui.Slider(rect, Lang[Volume], "", MusicVolume, 0, 1)
 }
