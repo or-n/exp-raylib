@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	MaxX = 256
-	MaxY = 256
+	MaxX     = 256
+	MaxY     = 256
+	TextureX = i32(16)
+	TextureY = i32(16)
 )
 
 type Block int

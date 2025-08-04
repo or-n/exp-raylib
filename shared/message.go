@@ -24,8 +24,13 @@ type Message struct {
 	Data any
 }
 
-type MapData struct {
-	Map [MaxY][MaxX]Block
+type InitData struct {
+	Map    [MaxY][MaxX]Block
+	Player Player
+}
+
+type JoinData struct {
+	Name string
 }
 
 type ChangeBlockData struct {
@@ -34,20 +39,27 @@ type ChangeBlockData struct {
 }
 
 func MessageRegister() {
-	gob.Register(MapData{})
+	gob.Register(JoinData{})
+	gob.Register(InitData{})
 	gob.Register(ChangeBlockData{})
 }
 
 func Respond(msg Message, Map *[MaxY][MaxX]Block) (Message, bool, error) {
 	switch msg.Type {
 	case ClientGreet:
-		response := Message{
-			Type: ServerGreet,
-			Data: MapData{
-				Map: *Map,
-			},
+		if data, ok := msg.Data.(JoinData); ok {
+			var player Player
+			PlayerLoad("data/"+data.Name+".gob", &player)
+			response := Message{
+				Type: ServerGreet,
+				Data: InitData{
+					Map:    *Map,
+					Player: player,
+				},
+			}
+			return response, false, nil
 		}
-		return response, false, nil
+		return Message{}, false, fmt.Errorf("ClientGreet data")
 	case ClientChangeBlock:
 		if data, ok := msg.Data.(ChangeBlockData); ok {
 			Map[data.Y][data.X] = data.Block
