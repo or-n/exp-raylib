@@ -34,6 +34,10 @@ func handleConn(conn net.Conn) {
 	log.Println("handling conn")
 	defer func() {
 		mu.Lock()
+		name := ActivePlayers[conn]
+		player := Players[name]
+		PlayerSave("data/"+name+".gob", &player)
+		log.Println(name + " player backup saved")
 		delete(ActivePlayers, conn)
 		mu.Unlock()
 		log.Println("closing conn")
