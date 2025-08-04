@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	MaxX = 10000
+	MaxX = 256
 	MaxY = 256
 )
 

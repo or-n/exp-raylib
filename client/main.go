@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Multi  = false
+	Multi  = true
 	update = func() {
 		// if IsKeyDown(KeyEscape) {
 		// 	SimulationState = StateMenu
@@ -59,8 +59,8 @@ func DrawFPSTopLeft() {
 func main() {
 	MessageRegister()
 	InitAudioDevice()
-	// InitWindow(1920, 999, "multiplayer")
-	InitWindow(1920, 1080, "multiplayer")
+	InitWindow(1920, 999, "multiplayer")
+	// InitWindow(1920, 1080, "multiplayer")
 	defer func() {
 		PlayerSave(PlayerFile, &MainPlayer)
 		InputSave(InputFile, &Input)
@@ -86,8 +86,8 @@ func main() {
 		SimulationState = StateGame
 		go ConnSendSingleplayer()
 	}
-	// SetExitKey(0)
-	// SetMainLoop(update)
+	SetExitKey(0)
+	SetMainLoop(update)
 	for !WindowShouldClose() {
 		update()
 	}

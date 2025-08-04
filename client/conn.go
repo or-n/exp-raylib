@@ -1,16 +1,16 @@
 package main
 
 import (
-	// "context"
+	"context"
 	"encoding/gob"
-	// "github.com/coder/websocket"
+	"github.com/coder/websocket"
 	// . "github.com/or-n/util-go"
 	"log"
 	"net"
 	. "shared"
-	// "syscall/js"
-	"os"
-	// "time"
+	"syscall/js"
+	// "os"
+	"time"
 	// "fmt"
 )
 
@@ -26,30 +26,30 @@ const (
 )
 
 func Remote() string {
-	return os.Getenv("SERVER_IP")
-	// ip := js.Global().Get("SERVER_IP")
-	// if !ip.Truthy() {
-	// 	return local
-	// }
-	// return ip.String()
+	// return os.Getenv("SERVER_IP")
+	ip := js.Global().Get("SERVER_IP")
+	if !ip.Truthy() {
+		return local
+	}
+	return ip.String()
 }
 
 func ConnJoin() {
 	SimulationState = StateJoining
-	// ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	// defer cancel()
-	// url := "wss://" + Ip + "/ws"
-	// log.Println("Dialing WebSocket:", url)
-	// conn, _, err := websocket.Dial(ctx, url, nil)
-	conn, err := net.Dial("tcp", Ip+PortTCP)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	url := "wss://" + Ip + "/ws"
+	log.Println("Dialing WebSocket:", url)
+	conn, _, err := websocket.Dial(ctx, url, nil)
+	// conn, err := net.Dial("tcp", Ip+PortTCP)
 	if err != nil {
 		log.Println("WebSocket join error:", err)
 		SimulationState = StateJoinError
 		return
 	}
 	log.Printf("connected")
-	// MainConn = websocket.NetConn(context.Background(), conn, websocket.MessageBinary)
-	MainConn = conn
+	MainConn = websocket.NetConn(context.Background(), conn, websocket.MessageBinary)
+	// MainConn = conn
 	SimulationState = StateGame
 	Outgoing <- Message{Type: ClientGreet, Data: nil}
 	go ConnReceive()
