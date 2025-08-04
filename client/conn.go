@@ -92,7 +92,8 @@ func ConnSendSingleplayer() {
 	for msg := range Outgoing {
 		response, _, err := Respond(msg, &Map)
 		if err != nil {
-			Incoming <- response
+			continue
 		}
+		Incoming <- response
 	}
 }

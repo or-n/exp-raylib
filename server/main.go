@@ -56,11 +56,12 @@ func handleConn(conn net.Conn) {
 		log.Printf("Received message: %+v\n", msg)
 		response, broadcast, err := Respond(msg, &ServerMap)
 		if err != nil {
-			if broadcast {
-				Broadcast(response)
-			} else {
-				Send(conn, response)
-			}
+			continue
+		}
+		if broadcast {
+			Broadcast(response)
+		} else {
+			Send(conn, response)
 		}
 	}
 }
