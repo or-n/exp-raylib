@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Multi  = true
+	Multi  = false
 	update = func() {
 		// if IsKeyDown(KeyEscape) {
 		// 	SimulationState = StateMenu
@@ -26,6 +26,7 @@ var (
 			text := fmt.Sprintf("Couldn't join %s", Ip)
 			DrawText(text, 400, 400, 20, White)
 		case StateGame:
+			handleIncomingOnce()
 			CameraUpdate()
 			PlayerUpdate(&MainPlayer)
 			MainCamera.Target = PlayerCenter(&MainPlayer)
@@ -58,7 +59,8 @@ func DrawFPSTopLeft() {
 func main() {
 	MessageRegister()
 	InitAudioDevice()
-	InitWindow(1920, 999, "multiplayer")
+	// InitWindow(1920, 999, "multiplayer")
+	InitWindow(1920, 1080, "multiplayer")
 	defer func() {
 		PlayerSave(PlayerFile, &MainPlayer)
 		InputSave(InputFile, &Input)
@@ -84,8 +86,8 @@ func main() {
 		SimulationState = StateGame
 		go ConnSendSingleplayer()
 	}
-	SetExitKey(0)
-	SetMainLoop(update)
+	// SetExitKey(0)
+	// SetMainLoop(update)
 	for !WindowShouldClose() {
 		update()
 	}

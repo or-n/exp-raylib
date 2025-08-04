@@ -7,12 +7,14 @@ import (
 
 var (
 	MapLoaded   bool
+	MapRendered bool
 	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
 	texture_x   = i32(16)
 	texture_y   = i32(16)
 	offset_x    = -i32(MaxX) * texture_x / 2
 	offset_y    = i32(0)
+	mapTexture  RenderTexture2D
 )
 
 func MapInit() {
@@ -55,36 +57,52 @@ func RectCenter(r Rectangle) Vector2 {
 	return NewVector2(r.X+r.Width*0.5, r.Y+r.Height*0.5)
 }
 
+func changeBlock(data ChangeBlockData) {
+	Map[data.Y][data.X] = data.Block
+	BeginTextureMode(mapTexture)
+	x := i32(data.X) * texture_x
+	y := i32(data.Y) * texture_y
+	if data.Block == Dirt {
+		DrawTexture(dirtTexture, x, y, White)
+	} else {
+		DrawRectangle(x, y, texture_x, texture_y, WindowBg)
+	}
+	EndTextureMode()
+}
+
 func MapDraw() {
-	cameraRect := CameraRect(0)
-	rect := Rectangle{}
-	rect.Width = f32(texture_x)
-	rect.Height = f32(texture_y)
-	center := RectCenter(cameraRect)
-	cx, cy := MapIndex(center)
-	ny := 35
-	nx := 61
-	// ny := 16
-	// nx := 16
-	for y := range ny {
-		iy := y - ny/2 + cy
-		if !MapInsideY(iy) {
-			continue
+	if MapLoaded {
+		if !MapRendered {
+			MapTextureInit()
+			MapRendered = true
 		}
-		position_y := i32(iy)*texture_y + offset_y
-		rect.Y = f32(position_y)
-		for x := range nx {
-			ix := x - nx/2 + cx
-			if !MapInsideX(ix) {
-				continue
-			}
-			position_x := i32(ix)*texture_x + offset_x
-			rect.X = f32(position_x)
-			if Map[iy][ix] == Dirt {
-				DrawTexture(dirtTexture, position_x, position_y, White)
+		texture := mapTexture.Texture
+		src := Rectangle{}
+		src.Width = f32(texture.Width)
+		src.Height = -f32(texture.Height)
+		dst := Rectangle{}
+		dst.X = f32(offset_x)
+		dst.Y = f32(offset_y)
+		dst.Width = f32(texture.Width)
+		dst.Height = f32(texture.Height)
+		origin := NewVector2(0, 0)
+		DrawTexturePro(texture, src, dst, origin, 0, White)
+	}
+}
+
+func MapTextureInit() {
+	mapTexture = LoadRenderTexture(MaxX*texture_x, MaxY*texture_y)
+	BeginTextureMode(mapTexture)
+	for y := range MaxY {
+		pos_y := i32(y) * texture_y
+		for x := range MaxX {
+			pos_x := i32(x) * texture_x
+			if Map[y][x] == Dirt {
+				DrawTexture(dirtTexture, pos_x, pos_y, White)
 			}
 		}
 	}
+	EndTextureMode()
 }
 
 func MapIndex(position Vector2) (int, int) {
