@@ -17,7 +17,8 @@ import (
 var (
 	MapFile       = "data/map.gob"
 	ServerMap     [MaxY][MaxX]Block
-	ActivePlayers = make(map[net.Conn]*Player)
+	ActivePlayers = make(map[net.Conn]string)
+	Players       = make(map[string]Player)
 	mu            sync.Mutex
 )
 
@@ -38,10 +39,6 @@ func handleConn(conn net.Conn) {
 		log.Println("closing conn")
 		conn.Close()
 	}()
-	player := &Player{}
-	mu.Lock()
-	ActivePlayers[conn] = player
-	mu.Unlock()
 	for {
 		var msg Message
 		if err := FromSeq(conn, &msg); err != nil {
@@ -54,14 +51,25 @@ func handleConn(conn net.Conn) {
 			return
 		}
 		log.Printf("Received message: %+v\n", msg)
-		response, broadcast, err := Respond(msg, &ServerMap)
+		if msg.Type == ClientGreet {
+			if data, ok := msg.Data.(JoinData); ok {
+				mu.Lock()
+				ActivePlayers[conn] = data.Name
+				mu.Unlock()
+			}
+		}
+		responses, broadcast, err := Respond(msg, &ServerMap, Players)
 		if err != nil {
 			continue
 		}
 		if broadcast {
-			Broadcast(response)
+			for _, response := range responses {
+				Broadcast(response)
+			}
 		} else {
-			Send(conn, response)
+			for _, response := range responses {
+				Send(conn, response)
+			}
 		}
 	}
 }
@@ -97,11 +105,15 @@ func main() {
 	MessageRegister()
 	MapLoad(MapFile, &ServerMap)
 	go func() {
-		ticker := time.NewTicker(time.Minute)
+		ticker := time.NewTicker(time.Second * 15)
 		defer ticker.Stop()
 		for range ticker.C {
 			MapSave(MapFile, &ServerMap)
 			log.Println("Map backup saved")
+			for name, player := range Players {
+				PlayerSave("data/"+name+".gob", &player)
+				log.Println(name + " player backup saved")
+			}
 		}
 	}()
 	go func() {

@@ -38,7 +38,8 @@ func ConnJoin() {
 	SimulationState = StateJoining
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	url := "wss://" + Ip + "/ws"
+	// url := "wss://" + Ip + "/ws"
+	url := "ws://" + Ip + PortWs + "/ws"
 	log.Println("Dialing WebSocket:", url)
 	conn, _, err := websocket.Dial(ctx, url, nil)
 	// conn, err := net.Dial("tcp", Ip+PortTCP)
@@ -85,11 +86,15 @@ func handleResponse(msg Message) {
 		if data, ok := msg.Data.(InitData); ok {
 			Map = data.Map
 			MapLoaded = true
-			MainPlayer = data.Player
+			Players[PlayerName] = data.Player
 		}
 	case ServerChangeBlock:
 		if data, ok := msg.Data.(ChangeBlockData); ok {
 			changeBlock(data)
+		}
+	case ServerChangePlayer:
+		if data, ok := msg.Data.(PlayerData); ok {
+			Players[data.Name] = data.Player
 		}
 	}
 }
@@ -104,10 +109,12 @@ func handleIncomingOnce() {
 
 func ConnSendSingleplayer() {
 	for msg := range Outgoing {
-		response, _, err := Respond(msg, &Map)
+		responses, _, err := Respond(msg, &Map, Players)
 		if err != nil {
 			continue
 		}
-		Incoming <- response
+		for _, response := range responses {
+			Incoming <- response
+		}
 	}
 }

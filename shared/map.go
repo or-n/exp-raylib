@@ -2,6 +2,7 @@ package shared
 
 import (
 	"fmt"
+	. "github.com/gen2brain/raylib-go/raylib"
 	. "github.com/or-n/util-go"
 	"math/rand"
 )
@@ -11,6 +12,8 @@ const (
 	MaxY     = 256
 	TextureX = i32(16)
 	TextureY = i32(16)
+	OffsetX  = -i32(MaxX) * TextureX / 2
+	OffsetY  = i32(0)
 )
 
 type Block int
@@ -49,4 +52,13 @@ func MapSave(filepath string, Map *[MaxY][MaxX]Block) {
 	if err := Save(filepath, *Map); err != nil {
 		fmt.Println("Failed to save map:", err)
 	}
+}
+
+func MapRect(x, y int) Rectangle {
+	r := Rectangle{}
+	r.X = f32(i32(x)*TextureX + OffsetX)
+	r.Y = f32(i32(y)*TextureY + OffsetY)
+	r.Width = f32(TextureX)
+	r.Height = f32(TextureY)
+	return r
 }

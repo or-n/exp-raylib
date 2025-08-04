@@ -6,6 +6,10 @@ import (
 	. "github.com/or-n/util-go"
 )
 
+var (
+	PlayerSize = NewVector2(8, 12)
+)
+
 type Player struct {
 	Inventory int
 	Position  Vector2
@@ -28,8 +32,17 @@ func PlayerSave(filename string, player *Player) {
 }
 
 func PlayerGen(player *Player) {
-	player.Position = NewVector2(0, f32(100*TextureY))
+	player.Position = NewVector2(0, f32(50*TextureY))
 	player.Grounded = false
 	player.JumpTo = nil
 	player.Inventory = 0
+}
+
+func PlayerGetRect(position Vector2) Rectangle {
+	rec := Rectangle{}
+	rec.X = position.X
+	rec.Y = position.Y
+	rec.Width = PlayerSize.X
+	rec.Height = PlayerSize.Y
+	return rec
 }

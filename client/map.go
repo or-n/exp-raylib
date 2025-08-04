@@ -10,8 +10,6 @@ var (
 	MapRendered bool
 	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
-	offset_x    = -i32(MaxX) * TextureX / 2
-	offset_y    = i32(0)
 	mapTexture  RenderTexture2D
 )
 
@@ -31,14 +29,14 @@ func MapCollide(rec *Rectangle) bool {
 		if !MapInsideY(iy) {
 			continue
 		}
-		position_y := i32(iy)*TextureY + offset_y
+		position_y := i32(iy)*TextureY + OffsetY
 		t.Y = position_y
 		for x := range n {
 			ix := x - n/2 + cx
 			if !MapInsideX(ix) {
 				continue
 			}
-			position_x := i32(ix)*TextureX + offset_x
+			position_x := i32(ix)*TextureX + OffsetX
 			t.X = position_x
 			if Map[iy][ix] == Dirt {
 				tile := t.ToFloat32()
@@ -79,8 +77,8 @@ func MapDraw() {
 		src.Width = f32(texture.Width)
 		src.Height = -f32(texture.Height)
 		dst := Rectangle{}
-		dst.X = f32(offset_x)
-		dst.Y = f32(offset_y)
+		dst.X = f32(OffsetX)
+		dst.Y = f32(OffsetY)
 		dst.Width = f32(texture.Width)
 		dst.Height = f32(texture.Height)
 		origin := NewVector2(0, 0)
@@ -104,8 +102,8 @@ func MapTextureInit() {
 }
 
 func MapIndex(position Vector2) (int, int) {
-	x := (i32(position.X) - offset_x) / TextureX
-	y := (i32(position.Y) - offset_y) / TextureY
+	x := (i32(position.X) - OffsetX) / TextureX
+	y := (i32(position.Y) - OffsetY) / TextureY
 	return int(x), int(y)
 }
 
@@ -115,13 +113,4 @@ func MapInsideX(x int) bool {
 
 func MapInsideY(y int) bool {
 	return y >= 0 && y < MaxY
-}
-
-func MapRect(x, y int) Rectangle {
-	r := Rectangle{}
-	r.X = f32(i32(x)*TextureX + offset_x)
-	r.Y = f32(i32(y)*TextureY + offset_y)
-	r.Width = f32(TextureX)
-	r.Height = f32(TextureY)
-	return r
 }

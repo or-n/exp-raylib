@@ -28,13 +28,15 @@ var (
 		case StateGame:
 			handleIncomingOnce()
 			CameraUpdate()
-			PlayerUpdate(&MainPlayer)
-			MainCamera.Target = PlayerCenter(&MainPlayer)
+			player := Players[PlayerName]
+			PlayerUpdate(&player)
+			MainCamera.Target = PlayerCenter(&player)
 			BeginMode2D(MainCamera)
 			MapDraw()
-			PlayerDraw(&MainPlayer)
+			PlayerDraw(&player)
 			EndMode2D()
-			PlayerOverlayDraw(&MainPlayer)
+			PlayerOverlayDraw(&player)
+			Players[PlayerName] = player
 		case StateOptions:
 			ShowCursor()
 			OptionsUpdate()
@@ -62,7 +64,7 @@ func main() {
 	InitWindow(1920, 999, "multiplayer")
 	// InitWindow(1920, 1080, "multiplayer")
 	defer func() {
-		PlayerSave(PlayerFile, &MainPlayer)
+		// PlayerSave(PlayerFile, &MainPlayer)
 		InputSave(InputFile, &Input)
 		CloseWindow()
 	}()
@@ -78,7 +80,8 @@ func main() {
 	FontInit()
 	MenuInit()
 	if Multi {
-		Ip = Remote()
+		// Ip = Remote()
+		Ip = local
 		ConnJoin()
 	} else {
 		MapGen(&Map)

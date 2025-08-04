@@ -8,33 +8,23 @@ import (
 )
 
 var (
-	PlayerSize    Vector2
 	PlayerTexture Texture2D
-	MainPlayer    Player
 	PlayerName    string
 	PlayerFile    = "data/player.gob"
+	Players       = make(map[string]Player)
 )
 
 func PlayerInit() {
 	PlayerName = "rep"
-	PlayerLoad(PlayerFile, &MainPlayer)
-	PlayerSize = NewVector2(8, 12)
+	Players[PlayerName] = Player{}
+	// PlayerLoad(PlayerFile, &MainPlayer)
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
-func PlayerRestart() {
-	MainPlayer.Position = NewVector2(0, f32(100*TextureY))
-	MainPlayer.Grounded = false
-	MainPlayer.JumpTo = nil
-}
-
-func PlayerGetRect(position Vector2) Rectangle {
-	rec := Rectangle{}
-	rec.X = position.X + 1
-	rec.Y = position.Y + 2
-	rec.Width = PlayerSize.X - 2
-	rec.Height = PlayerSize.Y - 2
-	return rec
+func PlayerRestart(player *Player) {
+	player.Position = NewVector2(0, f32(100*TextureY))
+	player.Grounded = false
+	player.JumpTo = nil
 }
 
 func PlayerRealPosition(player *Player) Vector2 {
@@ -103,27 +93,22 @@ func PlayerUpdate(player *Player) {
 	if !MapLoaded {
 		return
 	}
+	old := *player
 	PlayerPositionUpdate(player)
 	p := CursorPosition()
 	x, y := MapIndex(p)
 	if MapInsideX(x) && MapInsideY(y) {
-		r := MapRect(x, y)
 		if IsMouseButtonDown(MouseButtonLeft) && Map[y][x] != Empty {
-			Outgoing <- Message{Type: ClientChangeBlock, Data: ChangeBlockData{
-				X: x, Y: y, Block: Empty,
-			}}
-			player.Inventory += 1
+			change := ChangeBlockData{X: x, Y: y, Block: Empty}
+			Outgoing <- Message{Type: ClientChangeBlock, Data: PlayerChangeBlock{Name: PlayerName, Change: change}}
 		}
 		if IsMouseButtonDown(MouseButtonRight) && Map[y][x] == Empty && player.Inventory > 0 {
-			p := PlayerGetRect(player.Position)
-			if CheckCollisionRecs(p, r) {
-				return
-			}
-			Outgoing <- Message{Type: ClientChangeBlock, Data: ChangeBlockData{
-				X: x, Y: y, Block: Dirt,
-			}}
-			player.Inventory -= 1
+			change := ChangeBlockData{X: x, Y: y, Block: Dirt}
+			Outgoing <- Message{Type: ClientChangeBlock, Data: PlayerChangeBlock{Name: PlayerName, Change: change}}
 		}
+	}
+	if old != *player {
+		Outgoing <- Message{Type: ClientChangePlayer, Data: PlayerData{Name: PlayerName, Player: *player}}
 	}
 }
 
