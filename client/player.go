@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	. "github.com/gen2brain/raylib-go/raylib"
 	. "github.com/or-n/util-go"
 	. "shared"
@@ -12,38 +11,19 @@ var (
 	PlayerSize    Vector2
 	PlayerTexture Texture2D
 	MainPlayer    Player
+	PlayerName    string
 	PlayerFile    = "data/player.gob"
 )
 
-func PlayerGen(player *Player) {
-	player.Position = NewVector2(0, f32(100*texture_y))
-	player.Grounded = false
-	player.JumpTo = nil
-	player.Inventory = 0
-}
-
-func PlayerLoad(filename string, player *Player) {
-	if err := Load(PlayerFile, &MainPlayer); err != nil {
-		fmt.Println("Error loading player:", err)
-		PlayerGen(&MainPlayer)
-		PlayerSave(PlayerFile, &MainPlayer)
-	}
-}
-
-func PlayerSave(filename string, player *Player) {
-	if err := Save(PlayerFile, MainPlayer); err != nil {
-		fmt.Println("Failed to save player:", err)
-	}
-}
-
 func PlayerInit() {
+	PlayerName = "rep"
 	PlayerLoad(PlayerFile, &MainPlayer)
 	PlayerSize = NewVector2(8, 12)
 	PlayerTexture = LoadTexture("asset/nwm.png")
 }
 
 func PlayerRestart() {
-	MainPlayer.Position = NewVector2(0, f32(100*texture_y))
+	MainPlayer.Position = NewVector2(0, f32(100*TextureY))
 	MainPlayer.Grounded = false
 	MainPlayer.JumpTo = nil
 }
@@ -151,8 +131,8 @@ func PlayerOverlayDraw(player *Player) {
 	inventory := strconv.Itoa(player.Inventory)
 	DrawText(inventory, 30, 100, 20, White)
 	p := PlayerCenter(player)
-	x := strconv.Itoa(int(p.X / f32(texture_x)))
-	y := strconv.Itoa(int(p.Y / f32(texture_y)))
+	x := strconv.Itoa(int(p.X / f32(TextureX)))
+	y := strconv.Itoa(int(p.Y / f32(TextureY)))
 	DrawText(x, 200, 30, 20, White)
 	DrawText(y, 250, 30, 20, White)
 }

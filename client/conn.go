@@ -51,7 +51,7 @@ func ConnJoin() {
 	MainConn = websocket.NetConn(context.Background(), conn, websocket.MessageBinary)
 	// MainConn = conn
 	SimulationState = StateGame
-	Outgoing <- Message{Type: ClientGreet, Data: nil}
+	Outgoing <- Message{Type: ClientGreet, Data: JoinData{Name: PlayerName}}
 	go ConnReceive()
 	go ConnSend()
 }
@@ -82,9 +82,10 @@ func ConnSend() {
 func handleResponse(msg Message) {
 	switch msg.Type {
 	case ServerGreet:
-		if data, ok := msg.Data.(MapData); ok {
+		if data, ok := msg.Data.(InitData); ok {
 			Map = data.Map
 			MapLoaded = true
+			MainPlayer = data.Player
 		}
 	case ServerChangeBlock:
 		if data, ok := msg.Data.(ChangeBlockData); ok {
