@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"github.com/coder/websocket"
-	. "github.com/or-n/util-go"
+	// . "github.com/or-n/util-go"
 	"log"
 	"net"
 	. "shared"
@@ -55,7 +56,8 @@ func ConnJoin() {
 func ConnReceive() {
 	for {
 		var msg Message
-		if err := FromSeq(MainConn, &msg); err != nil {
+		Decoder := gob.NewDecoder(MainConn)
+		if err := Decoder.Decode(&msg); err != nil {
 			log.Println("Receiver error:", err)
 			return
 		}
@@ -78,9 +80,19 @@ func ConnReceive() {
 
 func ConnSend() {
 	for msg := range Outgoing {
-		if err := ToSeq(MainConn, msg); err != nil {
+		Encoder := gob.NewEncoder(MainConn)
+		if err := Encoder.Encode(msg); err != nil {
 			log.Println("Sender error:", err)
 			return
+		}
+	}
+}
+
+func ConnSendSingleplayer() {
+	for msg := range Outgoing {
+		response, _, err := Respond(msg, &Map)
+		if err != nil {
+			Incoming <- response
 		}
 	}
 }

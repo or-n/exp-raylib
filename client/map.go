@@ -62,26 +62,26 @@ func MapDraw() {
 	rect.Height = f32(texture_y)
 	center := RectCenter(cameraRect)
 	cx, cy := MapIndex(center)
-	// n := 61
-	n := 16
-	for y := range n {
-		iy := y - n/2 + cy
+	ny := 35
+	nx := 61
+	// ny := 16
+	// nx := 16
+	for y := range ny {
+		iy := y - ny/2 + cy
 		if !MapInsideY(iy) {
 			continue
 		}
 		position_y := i32(iy)*texture_y + offset_y
 		rect.Y = f32(position_y)
-		for x := range n {
-			ix := x - n/2 + cx
+		for x := range nx {
+			ix := x - nx/2 + cx
 			if !MapInsideX(ix) {
 				continue
 			}
 			position_x := i32(ix)*texture_x + offset_x
 			rect.X = f32(position_x)
 			if Map[iy][ix] == Dirt {
-				if CheckCollisionRecs(rect, cameraRect) {
-					DrawTexture(dirtTexture, position_x, position_y, White)
-				}
+				DrawTexture(dirtTexture, position_x, position_y, White)
 			}
 		}
 	}

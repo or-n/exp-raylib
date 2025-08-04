@@ -21,6 +21,14 @@ var (
 	mu            sync.Mutex
 )
 
+func Send(conn net.Conn, msg Message) {
+	err := ToSeq(conn, msg)
+	if err != nil {
+		log.Println("Error sending msg:", err)
+	}
+	log.Println("Sent msg")
+}
+
 func handleConn(conn net.Conn) {
 	log.Println("handling conn")
 	defer func() {
@@ -46,28 +54,12 @@ func handleConn(conn net.Conn) {
 			return
 		}
 		log.Printf("Received message: %+v\n", msg)
-		switch msg.Type {
-		case ClientGreet:
-			response := Message{
-				Type: ServerGreet,
-				Data: MapData{
-					Map: ServerMap,
-				},
-			}
-			err := ToSeq(conn, response)
-			if err != nil {
-				log.Println("Error sending ServerGreet:", err)
-			}
-			log.Println("Sent ServerGreet")
-		case ClientChangeBlock:
-			if data, ok := msg.Data.(ChangeBlockData); ok {
-				ServerMap[data.Y][data.X] = data.Block
-				response := Message{
-					Type: ServerChangeBlock,
-					Data: msg.Data,
-				}
+		response, broadcast, err := Respond(msg, &ServerMap)
+		if err != nil {
+			if broadcast {
 				Broadcast(response)
-				log.Println("Sent ServerChangeBlock")
+			} else {
+				Send(conn, response)
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	Multi  = true
 	update = func() {
 		// if IsKeyDown(KeyEscape) {
 		// 	SimulationState = StateMenu
@@ -74,8 +75,15 @@ func main() {
 	CursorInit()
 	FontInit()
 	MenuInit()
-	Ip = Remote()
-	ConnJoin()
+	if Multi {
+		Ip = Remote()
+		ConnJoin()
+	} else {
+		MapGen(&Map)
+		MapLoaded = true
+		SimulationState = StateGame
+		go ConnSendSingleplayer()
+	}
 	SetExitKey(0)
 	SetMainLoop(update)
 	for !WindowShouldClose() {
