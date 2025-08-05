@@ -80,7 +80,7 @@ func InputGen(Input *map[Action]i32) {
 		ActionX:      KeyD,
 		ActionJump:   KeyW,
 		ActionSneak:  KeyLeftShift,
-		ActionSprint: KeyLeftControl,
+		ActionSprint: KeyJ,
 	}
 }
 

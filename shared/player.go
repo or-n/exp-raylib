@@ -11,10 +11,16 @@ var (
 )
 
 type Player struct {
-	Inventory int
-	Position  Vector2
-	Grounded  bool
-	JumpTo    *float32
+	Inventory  int
+	Position   Vector2
+	Grounded   bool
+	JumpTo     *float32
+	PlaceBelow *PlaceBelow
+}
+
+type PlaceBelow struct {
+	X int
+	Y int
 }
 
 func PlayerLoad(filename string, player *Player) {
@@ -32,10 +38,11 @@ func PlayerSave(filename string, player *Player) {
 }
 
 func PlayerGen(player *Player) {
-	player.Position = NewVector2(0, f32(50*TextureY))
+	player.Inventory = 0
+	player.Position = NewVector2(0, f32((MaxY/2-10)*TextureY))
 	player.Grounded = false
 	player.JumpTo = nil
-	player.Inventory = 0
+	player.PlaceBelow = nil
 }
 
 func PlayerGetRect(position Vector2) Rectangle {

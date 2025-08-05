@@ -10,7 +10,11 @@ var (
 	MapRendered bool
 	Map         [MaxY][MaxX]Block
 	dirtTexture Texture2D
-	mapTexture  RenderTexture2D
+	chunks      [][]RenderTexture2D
+	chunkX      = i32(16)
+	chunkY      = i32(16)
+	chunkW      = MaxX / chunkX
+	chunkH      = MaxY / chunkY
 )
 
 func MapInit() {
@@ -55,9 +59,11 @@ func RectCenter(r Rectangle) Vector2 {
 
 func changeBlock(data ChangeBlockData) {
 	Map[data.Y][data.X] = data.Block
-	BeginTextureMode(mapTexture)
-	x := i32(data.X) * TextureX
-	y := i32(data.Y) * TextureY
+	chunk_x := i32(data.X) / chunkX
+	chunk_y := i32(data.Y) / chunkY
+	BeginTextureMode(chunks[chunk_y][chunk_x])
+	x := (i32(data.X) % chunkX) * TextureX
+	y := (i32(data.Y) % chunkY) * TextureY
 	if data.Block == Dirt {
 		DrawTexture(dirtTexture, x, y, White)
 	} else {
@@ -72,33 +78,57 @@ func MapDraw() {
 			MapTextureInit()
 			MapRendered = true
 		}
-		texture := mapTexture.Texture
-		src := Rectangle{}
-		src.Width = f32(texture.Width)
-		src.Height = -f32(texture.Height)
-		dst := Rectangle{}
-		dst.X = f32(OffsetX)
-		dst.Y = f32(OffsetY)
-		dst.Width = f32(texture.Width)
-		dst.Height = f32(texture.Height)
-		origin := NewVector2(0, 0)
-		DrawTexturePro(texture, src, dst, origin, 0, White)
+		// rect := CameraRect(0.25)
+		rect := CameraRect(0)
+		blockWidth := chunkX * TextureX
+		blockHeight := chunkY * TextureY
+		viewMinX := i32((rect.X - f32(OffsetX)) / f32(blockWidth))
+		viewMaxX := i32((rect.X + rect.Width - f32(OffsetX)) / f32(blockWidth))
+		viewMinY := i32((rect.Y - f32(OffsetY)) / f32(blockHeight))
+		viewMaxY := i32((rect.Y + rect.Height - f32(OffsetY)) / f32(blockHeight))
+		for chunk_y := max(0, viewMinY); chunk_y <= min(chunkH-1, viewMaxY); chunk_y++ {
+			for chunk_x := max(0, viewMinX); chunk_x <= min(chunkW-1, viewMaxX); chunk_x++ {
+				start_x := chunk_x * chunkX
+				start_y := chunk_y * chunkY
+				texture := chunks[chunk_y][chunk_x].Texture
+				src := Rectangle{}
+				src.Width = f32(texture.Width)
+				src.Height = -f32(texture.Height)
+				dst := Rectangle{}
+				dst.X = f32(OffsetX + start_x*TextureX)
+				dst.Y = f32(OffsetY + start_y*TextureY)
+				dst.Width = f32(texture.Width)
+				dst.Height = f32(texture.Height)
+				origin := NewVector2(0, 0)
+				DrawTexturePro(texture, src, dst, origin, 0, White)
+			}
+		}
+		// DrawRectangleLinesEx(rect, 10.0/MainCamera.Zoom, Violet)
 	}
 }
 
 func MapTextureInit() {
-	mapTexture = LoadRenderTexture(MaxX*TextureX, MaxY*TextureY)
-	BeginTextureMode(mapTexture)
-	for y := range MaxY {
-		pos_y := i32(y) * TextureY
-		for x := range MaxX {
-			pos_x := i32(x) * TextureX
-			if Map[y][x] == Dirt {
-				DrawTexture(dirtTexture, pos_x, pos_y, White)
+	chunks = make([][]RenderTexture2D, chunkH)
+	for chunk_y := range chunkH {
+		chunks[chunk_y] = make([]RenderTexture2D, chunkW)
+		for chunk_x := range chunkW {
+			chunks[chunk_y][chunk_x] = LoadRenderTexture(chunkX*TextureX, chunkY*TextureY)
+			start_x := chunk_x * chunkX
+			start_y := chunk_y * chunkY
+			BeginTextureMode(chunks[chunk_y][chunk_x])
+			ClearBackground(WindowBg)
+			for y := range chunkY {
+				pos_y := i32(y) * TextureY
+				for x := range chunkX {
+					pos_x := i32(x) * TextureX
+					if Map[y+start_y][x+start_x] == Dirt {
+						DrawTexture(dirtTexture, pos_x, pos_y, White)
+					}
+				}
 			}
+			EndTextureMode()
 		}
 	}
-	EndTextureMode()
 }
 
 func MapIndex(position Vector2) (int, int) {

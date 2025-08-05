@@ -13,6 +13,9 @@ var (
 		// if IsKeyDown(KeyEscape) {
 		// 	SimulationState = StateMenu
 		// }
+		for range 10 {
+			handleIncomingOnce()
+		}
 		BeginDrawing()
 		ClearBackground(WindowBg)
 		switch SimulationState {
@@ -26,7 +29,6 @@ var (
 			text := fmt.Sprintf("Couldn't join %s", Ip)
 			DrawText(text, 400, 400, 20, White)
 		case StateGame:
-			handleIncomingOnce()
 			CameraUpdate()
 			player := Players[PlayerName]
 			PlayerUpdate(&player)
@@ -61,6 +63,7 @@ func DrawFPSTopLeft() {
 func main() {
 	MessageRegister()
 	InitAudioDevice()
+	WindowSize = NewVector2(1920, 999)
 	InitWindow(1920, 999, "multiplayer")
 	// InitWindow(1920, 1080, "multiplayer")
 	defer func() {
@@ -68,7 +71,7 @@ func main() {
 		InputSave(InputFile, &Input)
 		CloseWindow()
 	}()
-	WindowSize = MonitorSize()
+	// WindowSize = MonitorSize()
 	ToggleFullscreen()
 	SetTargetFPS(600)
 	InputLoad(InputFile, &Input)

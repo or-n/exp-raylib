@@ -81,38 +81,48 @@ func Respond(msg Message, Map *[MaxY][MaxX]Block, players map[string]Player) ([]
 			change := data.Change
 			x, y := change.X, change.Y
 			player := players[data.Name]
-			ok := false
 			if change.Block == Dirt {
-				if Map[y][x] == Empty && player.Inventory > 0 {
-					r := MapRect(x, y)
-					p := PlayerGetRect(player.Position)
-					if CheckCollisionRecs(p, r) {
+				if Map[y][x] != Empty || player.Inventory == 0 {
+					return []Message{}, false, nil
+				}
+				r := MapRect(x, y)
+				p := PlayerGetRect(player.Position)
+				if CheckCollisionRecs(p, r) {
+					if player.JumpTo == nil || player.PlaceBelow != nil {
 						return []Message{}, false, nil
 					}
-					player.Inventory -= 1
-					ok = true
+					p2 := PlayerGetRect(NewVector2(player.Position.X, *player.JumpTo))
+					if CheckCollisionRecs(p2, r) {
+						return []Message{}, false, nil
+					}
+					player.PlaceBelow = new(PlaceBelow)
+					player.PlaceBelow.X = x
+					player.PlaceBelow.Y = y
+					response := Message{
+						Type: ServerChangePlayer,
+						Data: PlayerData{Name: data.Name, Player: player},
+					}
+					return []Message{response}, true, nil
 				}
+				player.PlaceBelow = nil
+				player.Inventory -= 1
 			} else {
-				if Map[y][x] != Empty {
-					player.Inventory += 1
-					ok = true
+				if Map[y][x] == Empty {
+					return []Message{}, false, nil
 				}
+				player.Inventory += 1
 			}
-			if ok {
-				Map[y][x] = change.Block
-				players[data.Name] = player
-				response1 := Message{
-					Type: ServerChangeBlock,
-					Data: ChangeBlockData{X: x, Y: y, Block: change.Block},
-				}
-				response2 := Message{
-					Type: ServerChangePlayer,
-					Data: PlayerData{Name: data.Name, Player: player},
-				}
-				return []Message{response1, response2}, true, nil
-			} else {
-				return []Message{}, false, nil
+			Map[y][x] = change.Block
+			players[data.Name] = player
+			response1 := Message{
+				Type: ServerChangeBlock,
+				Data: ChangeBlockData{X: x, Y: y, Block: change.Block},
 			}
+			response2 := Message{
+				Type: ServerChangePlayer,
+				Data: PlayerData{Name: data.Name, Player: player},
+			}
+			return []Message{response1, response2}, true, nil
 		}
 		return []Message{}, false, fmt.Errorf("ClientChangeBlock data")
 	case ClientChangePlayer:

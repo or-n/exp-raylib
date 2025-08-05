@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	MaxX     = 256
+	MaxX     = 1024
 	MaxY     = 256
 	TextureX = i32(16)
 	TextureY = i32(16)
