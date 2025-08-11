@@ -27,7 +27,7 @@ func main() {
 	GameInit()
 	SetTargetFPS(100)
 	// SetExitKey(0)
-	// SetMainLoop(update)
+	SetMainLoop(update)
 	for !WindowShouldClose() {
 		update()
 	}
