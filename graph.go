@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
+	. "github.com/gen2brain/raylib-go/raylib"
 	"math"
 	"math/rand"
 	"sort"
-	"time"
 )
 
 type Point struct {
@@ -84,22 +83,22 @@ type Graph struct {
 	edges  []Edge
 }
 
-func (g Graph) graphviz() {
-	fmt.Println("graph G {")
-	fmt.Printf(`  graph [layout=neato, size="1,1!", dpi=%d];`, size)
-	fmt.Println("")
-	fmt.Println(`  invis1 [pos="0,0!", shape=point, width=0, height=0];`)
-	fmt.Printf(`  invis2 [pos="%d,%d!", shape=point, width=0, height=0];`, size, size)
-	fmt.Println("")
-	fmt.Printf(`  node  [shape=circle, width=%f, height=%f, fixedsize=true, label=""];`, 2*radius, 2*radius)
-	fmt.Println("")
-	for i, p := range g.points {
-		fmt.Printf("  %d [pos=\"%f,%f!\"];\n", i, p.X*size, p.Y*size)
+func (g Graph) GraphDraw() {
+	rad := r * WindowSize.Y
+	for _, p := range g.points {
+		x := p.X * float64(WindowSize.X)
+		y := p.Y * float64(WindowSize.Y)
+		DrawCircle(int32(x), int32(y), rad, White)
 	}
 	for _, e := range g.edges {
-		fmt.Printf("  %d -- %d;\n", e.U, e.V)
+		p1 := g.points[e.U]
+		x1 := p1.X * float64(WindowSize.X)
+		y1 := p1.Y * float64(WindowSize.Y)
+		p2 := g.points[e.V]
+		x2 := p2.X * float64(WindowSize.X)
+		y2 := p2.Y * float64(WindowSize.Y)
+		DrawLine(int32(x1), int32(y1), int32(x2), int32(y2), White)
 	}
-	fmt.Println("}")
 }
 
 func new(n int, rng *rand.Rand) Graph {
@@ -157,10 +156,4 @@ func new(n int, rng *rand.Rand) Graph {
 		}
 	}
 	return Graph{points, edges}
-}
-
-func main() {
-	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
-	g := new(128, rng)
-	g.graphviz()
 }
